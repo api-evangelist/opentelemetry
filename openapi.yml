@@ -1,0 +1,870 @@
+openapi: 3.1.0
+info:
+  title: OpenTelemetry Protocol (OTLP) HTTP API
+  description: >-
+    The OpenTelemetry Protocol (OTLP) HTTP API provides endpoints for
+    receiving telemetry data including traces, metrics, and logs. OTLP is
+    the native protocol for OpenTelemetry and defines how telemetry data
+    is encoded, transported, and delivered between telemetry sources,
+    collectors, and backends.
+  version: 1.0.0
+  contact:
+    name: OpenTelemetry
+    url: https://opentelemetry.io
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+servers:
+  - url: http://localhost:4318
+    description: Default OTLP HTTP receiver endpoint
+paths:
+  /v1/traces:
+    post:
+      operationId: exportTraces
+      summary: Export trace data
+      description: >-
+        Accepts a batch of spans encoded in OTLP format. Each span
+        represents a unit of work or operation within a distributed
+        trace, containing timing data, attributes, events, and links.
+      tags:
+        - Traces
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExportTraceServiceRequest'
+          application/x-protobuf:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: Successfully accepted trace data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExportTraceServiceResponse'
+        '400':
+          description: Bad request - malformed payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+        '429':
+          description: Too many requests - rate limited
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+              description: Seconds to wait before retrying
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  /v1/metrics:
+    post:
+      operationId: exportMetrics
+      summary: Export metric data
+      description: >-
+        Accepts a batch of metrics encoded in OTLP format. Metrics
+        represent measurements captured at runtime, including gauges,
+        sums, histograms, and summaries with associated resource and
+        instrumentation scope metadata.
+      tags:
+        - Metrics
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExportMetricsServiceRequest'
+          application/x-protobuf:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: Successfully accepted metric data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExportMetricsServiceResponse'
+        '400':
+          description: Bad request - malformed payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+        '429':
+          description: Too many requests - rate limited
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+              description: Seconds to wait before retrying
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  /v1/logs:
+    post:
+      operationId: exportLogs
+      summary: Export log data
+      description: >-
+        Accepts a batch of log records encoded in OTLP format. Log
+        records represent timestamped text or structured data entries
+        with severity levels, associated resource metadata, and
+        optional trace context for correlation.
+      tags:
+        - Logs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExportLogsServiceRequest'
+          application/x-protobuf:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: Successfully accepted log data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExportLogsServiceResponse'
+        '400':
+          description: Bad request - malformed payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+        '429':
+          description: Too many requests - rate limited
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+              description: Seconds to wait before retrying
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+components:
+  schemas:
+    ExportTraceServiceRequest:
+      type: object
+      description: Request message for the trace export service
+      properties:
+        resourceSpans:
+          type: array
+          description: Batch of resource spans
+          items:
+            $ref: '#/components/schemas/ResourceSpans'
+    ExportTraceServiceResponse:
+      type: object
+      description: Response message for the trace export service
+      properties:
+        partialSuccess:
+          $ref: '#/components/schemas/ExportTracePartialSuccess'
+    ExportTracePartialSuccess:
+      type: object
+      description: Indicates partial success when some spans were rejected
+      properties:
+        rejectedSpans:
+          type: integer
+          format: int64
+          description: Number of spans rejected
+        errorMessage:
+          type: string
+          description: Human-readable error message
+    ExportMetricsServiceRequest:
+      type: object
+      description: Request message for the metrics export service
+      properties:
+        resourceMetrics:
+          type: array
+          description: Batch of resource metrics
+          items:
+            $ref: '#/components/schemas/ResourceMetrics'
+    ExportMetricsServiceResponse:
+      type: object
+      description: Response message for the metrics export service
+      properties:
+        partialSuccess:
+          $ref: '#/components/schemas/ExportMetricsPartialSuccess'
+    ExportMetricsPartialSuccess:
+      type: object
+      description: Indicates partial success when some data points were rejected
+      properties:
+        rejectedDataPoints:
+          type: integer
+          format: int64
+          description: Number of data points rejected
+        errorMessage:
+          type: string
+          description: Human-readable error message
+    ExportLogsServiceRequest:
+      type: object
+      description: Request message for the logs export service
+      properties:
+        resourceLogs:
+          type: array
+          description: Batch of resource logs
+          items:
+            $ref: '#/components/schemas/ResourceLogs'
+    ExportLogsServiceResponse:
+      type: object
+      description: Response message for the logs export service
+      properties:
+        partialSuccess:
+          $ref: '#/components/schemas/ExportLogsPartialSuccess'
+    ExportLogsPartialSuccess:
+      type: object
+      description: Indicates partial success when some log records were rejected
+      properties:
+        rejectedLogRecords:
+          type: integer
+          format: int64
+          description: Number of log records rejected
+        errorMessage:
+          type: string
+          description: Human-readable error message
+    ResourceSpans:
+      type: object
+      description: Collection of spans from a resource
+      properties:
+        resource:
+          $ref: '#/components/schemas/Resource'
+        scopeSpans:
+          type: array
+          description: Spans grouped by instrumentation scope
+          items:
+            $ref: '#/components/schemas/ScopeSpans'
+        schemaUrl:
+          type: string
+          description: Schema URL for the resource
+    ScopeSpans:
+      type: object
+      description: Spans associated with an instrumentation scope
+      properties:
+        scope:
+          $ref: '#/components/schemas/InstrumentationScope'
+        spans:
+          type: array
+          description: List of spans
+          items:
+            $ref: '#/components/schemas/Span'
+        schemaUrl:
+          type: string
+          description: Schema URL for the instrumentation scope
+    Span:
+      type: object
+      description: >-
+        A span represents a single operation within a trace. Spans can
+        be nested to form a trace tree. Each span has a name, timing
+        data, structured log messages (events), and links to other spans.
+      required:
+        - traceId
+        - spanId
+        - name
+        - kind
+        - startTimeUnixNano
+        - endTimeUnixNano
+      properties:
+        traceId:
+          type: string
+          description: Unique 16-byte trace identifier as 32 hex characters
+          pattern: ^[a-f0-9]{32}$
+        spanId:
+          type: string
+          description: Unique 8-byte span identifier as 16 hex characters
+          pattern: ^[a-f0-9]{16}$
+        traceState:
+          type: string
+          description: W3C trace state header value
+        parentSpanId:
+          type: string
+          description: Span ID of the parent span (empty for root spans)
+          pattern: ^[a-f0-9]{16}$
+        flags:
+          type: integer
+          format: int32
+          description: Trace flags as defined in W3C Trace Context
+        name:
+          type: string
+          description: Human-readable name of the span
+        kind:
+          type: integer
+          description: >-
+            Span kind: 0=unspecified, 1=internal, 2=server, 3=client,
+            4=producer, 5=consumer
+          enum: [0, 1, 2, 3, 4, 5]
+        startTimeUnixNano:
+          type: string
+          format: uint64
+          description: Start time in nanoseconds since Unix epoch
+        endTimeUnixNano:
+          type: string
+          format: uint64
+          description: End time in nanoseconds since Unix epoch
+        attributes:
+          type: array
+          description: Key-value pairs providing additional span context
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        droppedAttributesCount:
+          type: integer
+          format: int32
+          description: Number of attributes dropped due to limits
+        events:
+          type: array
+          description: Timed events associated with the span
+          items:
+            $ref: '#/components/schemas/SpanEvent'
+        droppedEventsCount:
+          type: integer
+          format: int32
+          description: Number of events dropped due to limits
+        links:
+          type: array
+          description: Links to other spans in the same or different traces
+          items:
+            $ref: '#/components/schemas/SpanLink'
+        droppedLinksCount:
+          type: integer
+          format: int32
+          description: Number of links dropped due to limits
+        status:
+          $ref: '#/components/schemas/SpanStatus'
+    SpanEvent:
+      type: object
+      description: A timed event within a span
+      properties:
+        timeUnixNano:
+          type: string
+          format: uint64
+          description: Event timestamp in nanoseconds since Unix epoch
+        name:
+          type: string
+          description: Event name
+        attributes:
+          type: array
+          description: Event attributes
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        droppedAttributesCount:
+          type: integer
+          format: int32
+    SpanLink:
+      type: object
+      description: A reference from one span to another
+      properties:
+        traceId:
+          type: string
+          description: Trace ID of the linked span
+        spanId:
+          type: string
+          description: Span ID of the linked span
+        traceState:
+          type: string
+          description: W3C trace state of the linked span
+        attributes:
+          type: array
+          description: Link attributes
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        droppedAttributesCount:
+          type: integer
+          format: int32
+        flags:
+          type: integer
+          format: int32
+    SpanStatus:
+      type: object
+      description: Status of the span
+      properties:
+        message:
+          type: string
+          description: Human-readable status message
+        code:
+          type: integer
+          description: 'Status code: 0=unset, 1=ok, 2=error'
+          enum: [0, 1, 2]
+    ResourceMetrics:
+      type: object
+      description: Collection of metrics from a resource
+      properties:
+        resource:
+          $ref: '#/components/schemas/Resource'
+        scopeMetrics:
+          type: array
+          description: Metrics grouped by instrumentation scope
+          items:
+            $ref: '#/components/schemas/ScopeMetrics'
+        schemaUrl:
+          type: string
+          description: Schema URL for the resource
+    ScopeMetrics:
+      type: object
+      description: Metrics associated with an instrumentation scope
+      properties:
+        scope:
+          $ref: '#/components/schemas/InstrumentationScope'
+        metrics:
+          type: array
+          description: List of metrics
+          items:
+            $ref: '#/components/schemas/Metric'
+        schemaUrl:
+          type: string
+          description: Schema URL for the instrumentation scope
+    Metric:
+      type: object
+      description: >-
+        Represents a single metric with its data points. A metric
+        contains one of gauge, sum, histogram, exponential histogram,
+        or summary data.
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Metric name
+        description:
+          type: string
+          description: Metric description
+        unit:
+          type: string
+          description: Metric unit (e.g., ms, bytes, 1)
+        gauge:
+          $ref: '#/components/schemas/Gauge'
+        sum:
+          $ref: '#/components/schemas/Sum'
+        histogram:
+          $ref: '#/components/schemas/Histogram'
+        exponentialHistogram:
+          $ref: '#/components/schemas/ExponentialHistogram'
+        summary:
+          $ref: '#/components/schemas/Summary'
+    Gauge:
+      type: object
+      description: Gauge metric representing instantaneous values
+      properties:
+        dataPoints:
+          type: array
+          items:
+            $ref: '#/components/schemas/NumberDataPoint'
+    Sum:
+      type: object
+      description: Sum metric representing cumulative or delta values
+      properties:
+        dataPoints:
+          type: array
+          items:
+            $ref: '#/components/schemas/NumberDataPoint'
+        aggregationTemporality:
+          type: integer
+          description: '0=unspecified, 1=delta, 2=cumulative'
+          enum: [0, 1, 2]
+        isMonotonic:
+          type: boolean
+          description: Whether the sum is monotonically increasing
+    Histogram:
+      type: object
+      description: Histogram metric with explicit bucket boundaries
+      properties:
+        dataPoints:
+          type: array
+          items:
+            $ref: '#/components/schemas/HistogramDataPoint'
+        aggregationTemporality:
+          type: integer
+          enum: [0, 1, 2]
+    ExponentialHistogram:
+      type: object
+      description: Histogram metric with exponential bucket boundaries
+      properties:
+        dataPoints:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExponentialHistogramDataPoint'
+        aggregationTemporality:
+          type: integer
+          enum: [0, 1, 2]
+    Summary:
+      type: object
+      description: Summary metric with precomputed quantiles
+      properties:
+        dataPoints:
+          type: array
+          items:
+            $ref: '#/components/schemas/SummaryDataPoint'
+    NumberDataPoint:
+      type: object
+      description: A single numeric data point
+      properties:
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        startTimeUnixNano:
+          type: string
+          format: uint64
+        timeUnixNano:
+          type: string
+          format: uint64
+        asDouble:
+          type: number
+          format: double
+        asInt:
+          type: string
+          format: int64
+        exemplars:
+          type: array
+          items:
+            $ref: '#/components/schemas/Exemplar'
+        flags:
+          type: integer
+          format: int32
+    HistogramDataPoint:
+      type: object
+      description: A single histogram data point
+      properties:
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        startTimeUnixNano:
+          type: string
+          format: uint64
+        timeUnixNano:
+          type: string
+          format: uint64
+        count:
+          type: string
+          format: uint64
+        sum:
+          type: number
+          format: double
+        bucketCounts:
+          type: array
+          items:
+            type: string
+            format: uint64
+        explicitBounds:
+          type: array
+          items:
+            type: number
+            format: double
+        exemplars:
+          type: array
+          items:
+            $ref: '#/components/schemas/Exemplar'
+        flags:
+          type: integer
+          format: int32
+        min:
+          type: number
+          format: double
+        max:
+          type: number
+          format: double
+    ExponentialHistogramDataPoint:
+      type: object
+      description: A single exponential histogram data point
+      properties:
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        startTimeUnixNano:
+          type: string
+          format: uint64
+        timeUnixNano:
+          type: string
+          format: uint64
+        count:
+          type: string
+          format: uint64
+        sum:
+          type: number
+          format: double
+        scale:
+          type: integer
+          format: int32
+        zeroCount:
+          type: string
+          format: uint64
+        positive:
+          $ref: '#/components/schemas/ExponentialHistogramBuckets'
+        negative:
+          $ref: '#/components/schemas/ExponentialHistogramBuckets'
+        flags:
+          type: integer
+          format: int32
+        exemplars:
+          type: array
+          items:
+            $ref: '#/components/schemas/Exemplar'
+        min:
+          type: number
+          format: double
+        max:
+          type: number
+          format: double
+        zeroThreshold:
+          type: number
+          format: double
+    ExponentialHistogramBuckets:
+      type: object
+      description: Bucket counts for exponential histograms
+      properties:
+        offset:
+          type: integer
+          format: int32
+        bucketCounts:
+          type: array
+          items:
+            type: string
+            format: uint64
+    SummaryDataPoint:
+      type: object
+      description: A single summary data point
+      properties:
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        startTimeUnixNano:
+          type: string
+          format: uint64
+        timeUnixNano:
+          type: string
+          format: uint64
+        count:
+          type: string
+          format: uint64
+        sum:
+          type: number
+          format: double
+        quantileValues:
+          type: array
+          items:
+            type: object
+            properties:
+              quantile:
+                type: number
+                format: double
+              value:
+                type: number
+                format: double
+        flags:
+          type: integer
+          format: int32
+    Exemplar:
+      type: object
+      description: Sample input measurement with trace context
+      properties:
+        filteredAttributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        timeUnixNano:
+          type: string
+          format: uint64
+        asDouble:
+          type: number
+          format: double
+        asInt:
+          type: string
+          format: int64
+        spanId:
+          type: string
+        traceId:
+          type: string
+    ResourceLogs:
+      type: object
+      description: Collection of logs from a resource
+      properties:
+        resource:
+          $ref: '#/components/schemas/Resource'
+        scopeLogs:
+          type: array
+          description: Logs grouped by instrumentation scope
+          items:
+            $ref: '#/components/schemas/ScopeLogs'
+        schemaUrl:
+          type: string
+          description: Schema URL for the resource
+    ScopeLogs:
+      type: object
+      description: Logs associated with an instrumentation scope
+      properties:
+        scope:
+          $ref: '#/components/schemas/InstrumentationScope'
+        logRecords:
+          type: array
+          description: List of log records
+          items:
+            $ref: '#/components/schemas/LogRecord'
+        schemaUrl:
+          type: string
+          description: Schema URL for the instrumentation scope
+    LogRecord:
+      type: object
+      description: >-
+        A single log record representing a timestamped event with
+        severity, body content, and associated metadata.
+      properties:
+        timeUnixNano:
+          type: string
+          format: uint64
+          description: Log timestamp in nanoseconds since Unix epoch
+        observedTimeUnixNano:
+          type: string
+          format: uint64
+          description: Time when the log was observed by the collection system
+        severityNumber:
+          type: integer
+          description: Numeric severity value (1-24)
+          minimum: 1
+          maximum: 24
+        severityText:
+          type: string
+          description: 'Severity text (e.g., TRACE, DEBUG, INFO, WARN, ERROR, FATAL)'
+        body:
+          $ref: '#/components/schemas/AnyValue'
+        attributes:
+          type: array
+          description: Additional log attributes
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        droppedAttributesCount:
+          type: integer
+          format: int32
+        flags:
+          type: integer
+          format: int32
+          description: Trace flags for log-trace correlation
+        traceId:
+          type: string
+          description: Trace ID for correlating logs with traces
+        spanId:
+          type: string
+          description: Span ID for correlating logs with spans
+    Resource:
+      type: object
+      description: >-
+        Describes the entity producing telemetry. A resource has
+        attributes such as service.name, service.version, host.name,
+        and other identifying metadata.
+      properties:
+        attributes:
+          type: array
+          description: Resource attributes
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        droppedAttributesCount:
+          type: integer
+          format: int32
+    InstrumentationScope:
+      type: object
+      description: >-
+        Metadata about the instrumentation library or component
+        that produced the telemetry data.
+      properties:
+        name:
+          type: string
+          description: Instrumentation scope name
+        version:
+          type: string
+          description: Instrumentation scope version
+        attributes:
+          type: array
+          description: Scope attributes
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        droppedAttributesCount:
+          type: integer
+          format: int32
+    KeyValue:
+      type: object
+      description: A key-value pair for attributes
+      required:
+        - key
+        - value
+      properties:
+        key:
+          type: string
+          description: Attribute key
+        value:
+          $ref: '#/components/schemas/AnyValue'
+    AnyValue:
+      type: object
+      description: >-
+        A polymorphic value container that can hold string, bool, int,
+        double, array, or key-value list values.
+      properties:
+        stringValue:
+          type: string
+        boolValue:
+          type: boolean
+        intValue:
+          type: string
+          format: int64
+        doubleValue:
+          type: number
+          format: double
+        arrayValue:
+          type: object
+          properties:
+            values:
+              type: array
+              items:
+                $ref: '#/components/schemas/AnyValue'
+        kvlistValue:
+          type: object
+          properties:
+            values:
+              type: array
+              items:
+                $ref: '#/components/schemas/KeyValue'
+        bytesValue:
+          type: string
+          format: byte
+    Status:
+      type: object
+      description: Error status response
+      properties:
+        code:
+          type: integer
+          description: HTTP status code
+        message:
+          type: string
+          description: Human-readable error message
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer token authentication for secured OTLP endpoints

@@ -13,5 +13,18 @@ tags:
 - Open Source
 created: '2025'
 modified: '2025'
-apis: []
+apis:
+- name: OpenTelemetry Protocol (OTLP) HTTP API
+  description: >-
+    The OTLP HTTP API provides endpoints for exporting traces, metrics,
+    and logs using the OpenTelemetry Protocol, the native wire format
+    for transmitting telemetry data between instrumented applications,
+    collectors, and observability backends.
+  properties:
+  - type: X-openapi
+    url: openapi.yml
+  - type: X-json-schema
+    url: json-schema.json
+  - type: X-json-ld-context
+    url: context.jsonld
 common: []

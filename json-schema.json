@@ -1,0 +1,716 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://opentelemetry.io/schemas/otlp/v1",
+  "title": "OpenTelemetry Protocol Data Models",
+  "description": "JSON Schema definitions for OTLP trace, metric, and log data models including spans, resources, and attributes.",
+  "type": "object",
+  "$defs": {
+    "Resource": {
+      "type": "object",
+      "title": "Resource",
+      "description": "Describes the entity producing telemetry, identified by attributes such as service.name, service.version, and host.name.",
+      "properties": {
+        "attributes": {
+          "type": "array",
+          "description": "Set of key-value pairs describing the resource",
+          "items": {
+            "$ref": "#/$defs/KeyValue"
+          }
+        },
+        "droppedAttributesCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of attributes dropped due to configured limits"
+        }
+      },
+      "additionalProperties": false
+    },
+    "InstrumentationScope": {
+      "type": "object",
+      "title": "InstrumentationScope",
+      "description": "Metadata about the instrumentation library that produced the telemetry data.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the instrumentation scope (e.g., library or package name)"
+        },
+        "version": {
+          "type": "string",
+          "description": "Version of the instrumentation scope"
+        },
+        "attributes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/KeyValue"
+          }
+        },
+        "droppedAttributesCount": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "KeyValue": {
+      "type": "object",
+      "title": "KeyValue",
+      "description": "A key-value pair used for attributes throughout the OTLP data model.",
+      "required": ["key", "value"],
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": "Attribute key following OpenTelemetry semantic conventions (e.g., service.name, http.method)"
+        },
+        "value": {
+          "$ref": "#/$defs/AnyValue"
+        }
+      },
+      "additionalProperties": false
+    },
+    "AnyValue": {
+      "type": "object",
+      "title": "AnyValue",
+      "description": "A polymorphic value container supporting string, boolean, integer, double, array, key-value list, and byte values.",
+      "properties": {
+        "stringValue": {
+          "type": "string"
+        },
+        "boolValue": {
+          "type": "boolean"
+        },
+        "intValue": {
+          "type": "string",
+          "pattern": "^-?[0-9]+$",
+          "description": "64-bit integer encoded as string"
+        },
+        "doubleValue": {
+          "type": "number"
+        },
+        "arrayValue": {
+          "type": "object",
+          "properties": {
+            "values": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/AnyValue"
+              }
+            }
+          }
+        },
+        "kvlistValue": {
+          "type": "object",
+          "properties": {
+            "values": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/KeyValue"
+              }
+            }
+          }
+        },
+        "bytesValue": {
+          "type": "string",
+          "contentEncoding": "base64"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Span": {
+      "type": "object",
+      "title": "Span",
+      "description": "A span represents a single operation within a distributed trace. Spans form a tree structure where each span may have a parent and multiple children.",
+      "required": ["traceId", "spanId", "name", "kind", "startTimeUnixNano", "endTimeUnixNano"],
+      "properties": {
+        "traceId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{32}$",
+          "description": "Globally unique 128-bit trace identifier encoded as 32 lowercase hex characters"
+        },
+        "spanId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{16}$",
+          "description": "Unique 64-bit span identifier encoded as 16 lowercase hex characters"
+        },
+        "traceState": {
+          "type": "string",
+          "description": "W3C TraceState header value providing vendor-specific trace context"
+        },
+        "parentSpanId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{16}$",
+          "description": "Span ID of the parent span; empty for root spans"
+        },
+        "flags": {
+          "type": "integer",
+          "description": "W3C trace flags"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable name describing the operation (e.g., GET /api/users)"
+        },
+        "kind": {
+          "type": "integer",
+          "enum": [0, 1, 2, 3, 4, 5],
+          "description": "Span kind: 0=UNSPECIFIED, 1=INTERNAL, 2=SERVER, 3=CLIENT, 4=PRODUCER, 5=CONSUMER"
+        },
+        "startTimeUnixNano": {
+          "type": "string",
+          "pattern": "^[0-9]+$",
+          "description": "Start time of the span in nanoseconds since Unix epoch"
+        },
+        "endTimeUnixNano": {
+          "type": "string",
+          "pattern": "^[0-9]+$",
+          "description": "End time of the span in nanoseconds since Unix epoch"
+        },
+        "attributes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/KeyValue"
+          },
+          "description": "Key-value pairs providing additional context about the operation"
+        },
+        "droppedAttributesCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SpanEvent"
+          },
+          "description": "Timed annotations associated with the span (e.g., exception events)"
+        },
+        "droppedEventsCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "links": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SpanLink"
+          },
+          "description": "References to causally related spans in the same or different traces"
+        },
+        "droppedLinksCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "status": {
+          "$ref": "#/$defs/SpanStatus"
+        }
+      },
+      "additionalProperties": false
+    },
+    "SpanEvent": {
+      "type": "object",
+      "title": "SpanEvent",
+      "description": "A timed event within a span, often used to record exceptions or notable moments.",
+      "properties": {
+        "timeUnixNano": {
+          "type": "string",
+          "pattern": "^[0-9]+$",
+          "description": "Event timestamp in nanoseconds since Unix epoch"
+        },
+        "name": {
+          "type": "string",
+          "description": "Event name (e.g., exception)"
+        },
+        "attributes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/KeyValue"
+          }
+        },
+        "droppedAttributesCount": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "SpanLink": {
+      "type": "object",
+      "title": "SpanLink",
+      "description": "A reference from one span to another, representing a causal relationship.",
+      "properties": {
+        "traceId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{32}$"
+        },
+        "spanId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{16}$"
+        },
+        "traceState": {
+          "type": "string"
+        },
+        "attributes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/KeyValue"
+          }
+        },
+        "droppedAttributesCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "flags": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "SpanStatus": {
+      "type": "object",
+      "title": "SpanStatus",
+      "description": "The status of a span indicating success, failure, or unset.",
+      "properties": {
+        "message": {
+          "type": "string",
+          "description": "Human-readable status message"
+        },
+        "code": {
+          "type": "integer",
+          "enum": [0, 1, 2],
+          "description": "Status code: 0=UNSET, 1=OK, 2=ERROR"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Metric": {
+      "type": "object",
+      "title": "Metric",
+      "description": "A metric measurement containing one of gauge, sum, histogram, exponential histogram, or summary data types.",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Metric name following semantic conventions (e.g., http.server.duration)"
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of the metric"
+        },
+        "unit": {
+          "type": "string",
+          "description": "Metric unit following UCUM conventions (e.g., ms, By, 1)"
+        },
+        "gauge": {
+          "$ref": "#/$defs/Gauge"
+        },
+        "sum": {
+          "$ref": "#/$defs/Sum"
+        },
+        "histogram": {
+          "$ref": "#/$defs/Histogram"
+        },
+        "exponentialHistogram": {
+          "$ref": "#/$defs/ExponentialHistogram"
+        },
+        "summary": {
+          "$ref": "#/$defs/Summary"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Gauge": {
+      "type": "object",
+      "title": "Gauge",
+      "description": "A gauge metric representing instantaneous point-in-time values.",
+      "properties": {
+        "dataPoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NumberDataPoint"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "Sum": {
+      "type": "object",
+      "title": "Sum",
+      "description": "A sum metric representing cumulative or delta aggregated values.",
+      "properties": {
+        "dataPoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NumberDataPoint"
+          }
+        },
+        "aggregationTemporality": {
+          "type": "integer",
+          "enum": [0, 1, 2],
+          "description": "0=UNSPECIFIED, 1=DELTA, 2=CUMULATIVE"
+        },
+        "isMonotonic": {
+          "type": "boolean",
+          "description": "Whether the sum is monotonically increasing"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Histogram": {
+      "type": "object",
+      "title": "Histogram",
+      "description": "A histogram metric with explicit bucket boundaries for distribution analysis.",
+      "properties": {
+        "dataPoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/HistogramDataPoint"
+          }
+        },
+        "aggregationTemporality": {
+          "type": "integer",
+          "enum": [0, 1, 2]
+        }
+      },
+      "additionalProperties": false
+    },
+    "ExponentialHistogram": {
+      "type": "object",
+      "title": "ExponentialHistogram",
+      "description": "A histogram metric with exponentially growing bucket boundaries.",
+      "properties": {
+        "dataPoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExponentialHistogramDataPoint"
+          }
+        },
+        "aggregationTemporality": {
+          "type": "integer",
+          "enum": [0, 1, 2]
+        }
+      },
+      "additionalProperties": false
+    },
+    "Summary": {
+      "type": "object",
+      "title": "Summary",
+      "description": "A summary metric with precomputed quantile values.",
+      "properties": {
+        "dataPoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SummaryDataPoint"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "NumberDataPoint": {
+      "type": "object",
+      "title": "NumberDataPoint",
+      "description": "A single numeric data point for gauge and sum metrics.",
+      "properties": {
+        "attributes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/KeyValue"
+          }
+        },
+        "startTimeUnixNano": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "timeUnixNano": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "asDouble": {
+          "type": "number"
+        },
+        "asInt": {
+          "type": "string",
+          "pattern": "^-?[0-9]+$"
+        },
+        "exemplars": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Exemplar"
+          }
+        },
+        "flags": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "HistogramDataPoint": {
+      "type": "object",
+      "title": "HistogramDataPoint",
+      "description": "A single data point for histogram metrics with explicit bucket boundaries.",
+      "properties": {
+        "attributes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/KeyValue"
+          }
+        },
+        "startTimeUnixNano": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "timeUnixNano": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "count": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "sum": {
+          "type": "number"
+        },
+        "bucketCounts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9]+$"
+          }
+        },
+        "explicitBounds": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "exemplars": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Exemplar"
+          }
+        },
+        "flags": {
+          "type": "integer"
+        },
+        "min": {
+          "type": "number"
+        },
+        "max": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ExponentialHistogramDataPoint": {
+      "type": "object",
+      "title": "ExponentialHistogramDataPoint",
+      "description": "A single data point for exponential histogram metrics.",
+      "properties": {
+        "attributes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/KeyValue"
+          }
+        },
+        "startTimeUnixNano": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "timeUnixNano": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "count": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "sum": {
+          "type": "number"
+        },
+        "scale": {
+          "type": "integer"
+        },
+        "zeroCount": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "positive": {
+          "$ref": "#/$defs/ExponentialHistogramBuckets"
+        },
+        "negative": {
+          "$ref": "#/$defs/ExponentialHistogramBuckets"
+        },
+        "flags": {
+          "type": "integer"
+        },
+        "exemplars": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Exemplar"
+          }
+        },
+        "min": {
+          "type": "number"
+        },
+        "max": {
+          "type": "number"
+        },
+        "zeroThreshold": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ExponentialHistogramBuckets": {
+      "type": "object",
+      "title": "ExponentialHistogramBuckets",
+      "description": "Bucket counts for exponential histogram positive or negative ranges.",
+      "properties": {
+        "offset": {
+          "type": "integer"
+        },
+        "bucketCounts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9]+$"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "SummaryDataPoint": {
+      "type": "object",
+      "title": "SummaryDataPoint",
+      "description": "A single data point for summary metrics with precomputed quantiles.",
+      "properties": {
+        "attributes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/KeyValue"
+          }
+        },
+        "startTimeUnixNano": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "timeUnixNano": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "count": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "sum": {
+          "type": "number"
+        },
+        "quantileValues": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "quantile": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "value": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "flags": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Exemplar": {
+      "type": "object",
+      "title": "Exemplar",
+      "description": "A sample input measurement with optional trace context for linking metrics to traces.",
+      "properties": {
+        "filteredAttributes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/KeyValue"
+          }
+        },
+        "timeUnixNano": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "asDouble": {
+          "type": "number"
+        },
+        "asInt": {
+          "type": "string",
+          "pattern": "^-?[0-9]+$"
+        },
+        "spanId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{16}$"
+        },
+        "traceId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{32}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "LogRecord": {
+      "type": "object",
+      "title": "LogRecord",
+      "description": "A single log record representing a timestamped event with severity level, body content, and optional trace correlation.",
+      "properties": {
+        "timeUnixNano": {
+          "type": "string",
+          "pattern": "^[0-9]+$",
+          "description": "Log record timestamp in nanoseconds since Unix epoch"
+        },
+        "observedTimeUnixNano": {
+          "type": "string",
+          "pattern": "^[0-9]+$",
+          "description": "Time when the log record was observed by the collection system"
+        },
+        "severityNumber": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 24,
+          "description": "Numeric severity (1-4=TRACE, 5-8=DEBUG, 9-12=INFO, 13-16=WARN, 17-20=ERROR, 21-24=FATAL)"
+        },
+        "severityText": {
+          "type": "string",
+          "description": "Human-readable severity text (e.g., INFO, ERROR)"
+        },
+        "body": {
+          "$ref": "#/$defs/AnyValue",
+          "description": "The log record body content"
+        },
+        "attributes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/KeyValue"
+          },
+          "description": "Additional structured metadata about the log record"
+        },
+        "droppedAttributesCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "flags": {
+          "type": "integer",
+          "description": "Trace flags for log-to-trace correlation"
+        },
+        "traceId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{32}$",
+          "description": "Trace ID for correlating this log with distributed traces"
+        },
+        "spanId": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{16}$",
+          "description": "Span ID for correlating this log with a specific span"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

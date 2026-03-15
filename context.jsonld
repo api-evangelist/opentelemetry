@@ -1,0 +1,210 @@
+{
+  "@context": {
+    "@vocab": "https://opentelemetry.io/schemas/1.0/",
+    "otel": "https://opentelemetry.io/schemas/1.0/",
+    "schema": "https://schema.org/",
+    "ssn": "http://www.w3.org/ns/ssn/",
+    "sosa": "http://www.w3.org/ns/sosa/",
+    "prov": "http://www.w3.org/ns/prov#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "dcterms": "http://purl.org/dc/terms/",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+
+    "Resource": {
+      "@id": "otel:Resource",
+      "@type": "@id",
+      "skos:definition": "An entity producing telemetry, described by attributes such as service name, version, and host",
+      "schema:sameAs": "prov:Agent"
+    },
+
+    "InstrumentationScope": {
+      "@id": "otel:InstrumentationScope",
+      "@type": "@id",
+      "skos:definition": "The instrumentation library or component that produced telemetry data",
+      "schema:sameAs": "prov:SoftwareAgent"
+    },
+
+    "Span": {
+      "@id": "otel:Span",
+      "@type": "@id",
+      "skos:definition": "A single operation within a distributed trace, representing a unit of work with timing, attributes, and relationships",
+      "schema:sameAs": "prov:Activity"
+    },
+
+    "Metric": {
+      "@id": "otel:Metric",
+      "@type": "@id",
+      "skos:definition": "A measurement captured at runtime representing system or application behavior",
+      "schema:sameAs": "sosa:Observation"
+    },
+
+    "LogRecord": {
+      "@id": "otel:LogRecord",
+      "@type": "@id",
+      "skos:definition": "A timestamped text or structured data record with severity and optional trace correlation",
+      "schema:sameAs": "prov:Entity"
+    },
+
+    "traceId": {
+      "@id": "otel:traceId",
+      "@type": "xsd:string",
+      "skos:definition": "A globally unique 128-bit identifier for a distributed trace"
+    },
+
+    "spanId": {
+      "@id": "otel:spanId",
+      "@type": "xsd:string",
+      "skos:definition": "A unique 64-bit identifier for a span within a trace"
+    },
+
+    "parentSpanId": {
+      "@id": "otel:parentSpanId",
+      "@type": "xsd:string",
+      "skos:definition": "The span ID of the parent span, establishing the trace tree hierarchy",
+      "schema:sameAs": "prov:wasInformedBy"
+    },
+
+    "name": {
+      "@id": "schema:name",
+      "@type": "xsd:string"
+    },
+
+    "description": {
+      "@id": "schema:description",
+      "@type": "xsd:string"
+    },
+
+    "startTimeUnixNano": {
+      "@id": "otel:startTimeUnixNano",
+      "@type": "xsd:unsignedLong",
+      "skos:definition": "Start time in nanoseconds since Unix epoch",
+      "schema:sameAs": "prov:startedAtTime"
+    },
+
+    "endTimeUnixNano": {
+      "@id": "otel:endTimeUnixNano",
+      "@type": "xsd:unsignedLong",
+      "skos:definition": "End time in nanoseconds since Unix epoch",
+      "schema:sameAs": "prov:endedAtTime"
+    },
+
+    "timeUnixNano": {
+      "@id": "otel:timeUnixNano",
+      "@type": "xsd:unsignedLong",
+      "skos:definition": "Timestamp in nanoseconds since Unix epoch",
+      "schema:sameAs": "schema:dateCreated"
+    },
+
+    "attributes": {
+      "@id": "otel:attributes",
+      "@type": "@id",
+      "skos:definition": "Key-value pairs providing additional context following OpenTelemetry semantic conventions",
+      "schema:sameAs": "schema:additionalProperty"
+    },
+
+    "kind": {
+      "@id": "otel:spanKind",
+      "@type": "xsd:integer",
+      "skos:definition": "The relationship of the span to its parent and children (internal, server, client, producer, consumer)"
+    },
+
+    "status": {
+      "@id": "otel:status",
+      "@type": "@id",
+      "skos:definition": "The completion status of a span (unset, ok, or error)",
+      "schema:sameAs": "schema:status"
+    },
+
+    "events": {
+      "@id": "otel:events",
+      "@type": "@id",
+      "skos:definition": "Timed annotations within a span representing notable moments such as exceptions",
+      "schema:sameAs": "schema:Event"
+    },
+
+    "links": {
+      "@id": "otel:links",
+      "@type": "@id",
+      "skos:definition": "References to causally related spans in the same or different traces",
+      "schema:sameAs": "prov:wasDerivedFrom"
+    },
+
+    "severityNumber": {
+      "@id": "otel:severityNumber",
+      "@type": "xsd:integer",
+      "skos:definition": "Numeric severity level of a log record (1-24 mapping to TRACE through FATAL)"
+    },
+
+    "severityText": {
+      "@id": "otel:severityText",
+      "@type": "xsd:string",
+      "skos:definition": "Human-readable severity label for a log record"
+    },
+
+    "body": {
+      "@id": "otel:body",
+      "@type": "xsd:string",
+      "skos:definition": "The main content of a log record",
+      "schema:sameAs": "schema:text"
+    },
+
+    "unit": {
+      "@id": "otel:unit",
+      "@type": "xsd:string",
+      "skos:definition": "The unit of measurement for a metric following UCUM conventions",
+      "schema:sameAs": "schema:unitCode"
+    },
+
+    "gauge": {
+      "@id": "otel:gauge",
+      "@type": "@id",
+      "skos:definition": "A metric representing an instantaneous point-in-time measurement",
+      "schema:sameAs": "sosa:Observation"
+    },
+
+    "sum": {
+      "@id": "otel:sum",
+      "@type": "@id",
+      "skos:definition": "A metric representing a cumulative or delta aggregated measurement"
+    },
+
+    "histogram": {
+      "@id": "otel:histogram",
+      "@type": "@id",
+      "skos:definition": "A metric capturing the distribution of measurements across explicit bucket boundaries"
+    },
+
+    "resource": {
+      "@id": "otel:resource",
+      "@type": "@id",
+      "skos:definition": "The entity that produced this telemetry data",
+      "schema:sameAs": "prov:wasAttributedTo"
+    },
+
+    "scope": {
+      "@id": "otel:scope",
+      "@type": "@id",
+      "skos:definition": "The instrumentation scope that generated this telemetry",
+      "schema:sameAs": "prov:wasGeneratedBy"
+    },
+
+    "exemplars": {
+      "@id": "otel:exemplars",
+      "@type": "@id",
+      "skos:definition": "Sample input measurements with trace context linking metrics to distributed traces"
+    },
+
+    "aggregationTemporality": {
+      "@id": "otel:aggregationTemporality",
+      "@type": "xsd:integer",
+      "skos:definition": "Whether metric values are delta (since last report) or cumulative (since start)"
+    },
+
+    "schemaUrl": {
+      "@id": "otel:schemaUrl",
+      "@type": "xsd:anyURI",
+      "skos:definition": "URL pointing to the OpenTelemetry schema version used for this telemetry data",
+      "schema:sameAs": "dcterms:conformsTo"
+    }
+  }
+}
