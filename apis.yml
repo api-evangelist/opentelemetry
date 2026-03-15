@@ -1,0 +1,17 @@
+name: OpenTelemetry
+description: Vendor-neutral open-source observability framework for cloud-native software,
+  providing a collection of tools, APIs, and SDKs for instrumenting, generating, collecting,
+  and exporting telemetry data including metrics, logs, and traces.
+url: https://opentelemetry.io
+tags:
+- Observability
+- Monitoring
+- Tracing
+- Metrics
+- Logging
+- Cloud Native
+- Open Source
+created: '2025'
+modified: '2025'
+apis: []
+common: []
