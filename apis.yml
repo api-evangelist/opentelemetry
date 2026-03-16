@@ -1,30 +1,56 @@
+aid: opentelemetry
 name: OpenTelemetry
-description: Vendor-neutral open-source observability framework for cloud-native software,
-  providing a collection of tools, APIs, and SDKs for instrumenting, generating, collecting,
-  and exporting telemetry data including metrics, logs, and traces.
-url: https://opentelemetry.io
+description: >-
+  Vendor-neutral open-source observability framework for cloud-native software,
+  providing a collection of tools, APIs, and SDKs for instrumenting, generating,
+  collecting, and exporting telemetry data including metrics, logs, and traces.
+type: Index
+position: Consumer
+access: 3rd-Party
+image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
 tags:
-- Observability
-- Monitoring
-- Tracing
-- Metrics
-- Logging
-- Cloud Native
-- Open Source
-created: '2025'
-modified: '2025'
+  - Observability
+  - Monitoring
+  - Tracing
+  - Metrics
+  - Logging
+  - Cloud Native
+  - Open Source
+created: '2025-01-01'
+modified: '2026-03-16'
+url: >-
+  https://raw.githubusercontent.com/api-evangelist/opentelemetry/refs/heads/main/apis.yml
+specificationVersion: '0.19'
 apis:
-- name: OpenTelemetry Protocol (OTLP) HTTP API
-  description: >-
-    The OTLP HTTP API provides endpoints for exporting traces, metrics,
-    and logs using the OpenTelemetry Protocol, the native wire format
-    for transmitting telemetry data between instrumented applications,
-    collectors, and observability backends.
-  properties:
-  - type: X-openapi
-    url: openapi.yml
-  - type: X-json-schema
-    url: json-schema.json
-  - type: X-json-ld-context
-    url: context.jsonld
-common: []
+  - aid: opentelemetry:opentelemetry-protocol-otlp-http-api
+    name: OpenTelemetry Protocol (OTLP) HTTP API
+    description: >-
+      The OTLP HTTP API provides endpoints for exporting traces, metrics, and
+      logs using the OpenTelemetry Protocol, the native wire format for
+      transmitting telemetry data between instrumented applications, collectors,
+      and observability backends.
+    humanURL: https://opentelemetry.io/docs/specs/otlp/
+    tags:
+      - Observability
+      - Tracing
+      - Metrics
+      - Logging
+    properties:
+      - type: Documentation
+        url: https://opentelemetry.io/docs/specs/otlp/
+common:
+  - url: https://opentelemetry.io/
+    name: OpenTelemetry
+    type: Website
+    description: 'null'
+  - url: https://opentelemetry.io/docs/
+    name: Documentation
+    type: Portal
+    description: 'null'
+  - url: https://github.com/open-telemetry
+    name: GitHub Organization
+    type: GitHubOrganization
+    description: 'null'
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com
