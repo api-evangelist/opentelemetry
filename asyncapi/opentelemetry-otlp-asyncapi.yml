@@ -1,0 +1,713 @@
+asyncapi: 2.6.0
+info:
+  title: OpenTelemetry Protocol (OTLP) Telemetry Events
+  description: >-
+    The OpenTelemetry Protocol (OTLP) defines the event-driven telemetry export
+    pipeline through which instrumented applications and OpenTelemetry Collectors
+    push batches of traces, metrics, and logs to observability backends. OTLP
+    operates as a push-based protocol where senders (SDK exporters or Collector
+    pipelines) initiate delivery of telemetry data to receivers (Collectors or
+    backends). The protocol supports both HTTP/JSON and gRPC transports with
+    identical data models. This AsyncAPI document describes the OTLP HTTP/1.1
+    streaming export channels and their message payload structures for traces,
+    metrics, and log records.
+  version: '1.3.0'
+  contact:
+    name: OpenTelemetry Community
+    url: https://opentelemetry.io/community/
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+externalDocs:
+  description: OTLP Specification
+  url: https://opentelemetry.io/docs/specs/otlp/
+servers:
+  otlpCollector:
+    url: 'http://{host}:{port}'
+    protocol: http
+    description: >-
+      OpenTelemetry Collector or compatible OTLP receiver endpoint. The default
+      HTTP receiver port is 4318. Backends and hosted observability services
+      expose their own endpoints at custom URLs.
+    variables:
+      host:
+        default: localhost
+        description: Hostname of the OTLP receiver
+      port:
+        default: '4318'
+        description: Port of the OTLP HTTP receiver (default 4318)
+    security:
+      - bearerAuth: []
+channels:
+  /v1/traces:
+    description: >-
+      Channel for exporting distributed trace data. Instrumented applications
+      and Collectors push batches of ResourceSpans to this endpoint. Each
+      ResourceSpans groups spans from a single resource (service instance) and
+      further organizes them by instrumentation scope. The receiver responds
+      with a partial success indicator when some spans could not be processed.
+    publish:
+      operationId: exportTraces
+      summary: Export a batch of trace spans
+      description: >-
+        Publishes a batch of distributed trace spans to the OTLP receiver.
+        The batch is organized as a list of ResourceSpans, each containing
+        spans from a specific resource (service instance) grouped by
+        instrumentation scope. Spans carry timing data, semantic attributes,
+        events (log-like annotations), and links to related spans.
+      message:
+        $ref: '#/components/messages/ExportTraceServiceRequest'
+  /v1/metrics:
+    description: >-
+      Channel for exporting metric telemetry data. Instrumented applications
+      and Collectors push batches of ResourceMetrics to this endpoint. Each
+      ResourceMetrics groups metric data points from a single resource and
+      organizes them by instrumentation scope. Metrics can represent gauges,
+      cumulative or delta sums, histograms, exponential histograms, or summaries.
+    publish:
+      operationId: exportMetrics
+      summary: Export a batch of metric data points
+      description: >-
+        Publishes a batch of metric measurements to the OTLP receiver. The
+        batch is organized as a list of ResourceMetrics, each containing
+        metrics from a specific resource grouped by instrumentation scope.
+        Each Metric contains one type of measurement: Gauge (instantaneous),
+        Sum (cumulative or delta counters), Histogram (explicit bucketed
+        distributions), ExponentialHistogram (base-2 exponential bucketed
+        distributions), or Summary (precomputed quantile distributions).
+      message:
+        $ref: '#/components/messages/ExportMetricsServiceRequest'
+  /v1/logs:
+    description: >-
+      Channel for exporting log record telemetry. Instrumented applications
+      and Collectors push batches of ResourceLogs to this endpoint. Each
+      ResourceLogs groups log records from a single resource by instrumentation
+      scope. Log records carry timestamp, severity, body content, and optional
+      trace context for correlating logs with distributed traces.
+    publish:
+      operationId: exportLogs
+      summary: Export a batch of log records
+      description: >-
+        Publishes a batch of log records to the OTLP receiver. The batch is
+        organized as a list of ResourceLogs, each containing log records from
+        a specific resource grouped by instrumentation scope. Log records
+        include timestamps, severity levels (numeric 1-24 mapping to TRACE
+        through FATAL4), structured body values, and optional traceId/spanId
+        fields for correlating logs with distributed traces.
+      message:
+        $ref: '#/components/messages/ExportLogsServiceRequest'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: >-
+        Bearer token for authenticating with secured OTLP endpoints. The token
+        is passed in the Authorization header as "Bearer {token}". Many OTLP
+        receivers also accept API keys via custom headers.
+  messages:
+    ExportTraceServiceRequest:
+      name: ExportTraceServiceRequest
+      title: Export Trace Service Request
+      summary: A batch of distributed trace spans from one or more resources
+      description: >-
+        OTLP trace export message containing a list of ResourceSpans. Each
+        ResourceSpans groups spans by the resource (service instance) that
+        produced them, further organized by instrumentation scope. This is
+        the primary payload sent from SDK exporters and Collector trace
+        pipelines to OTLP-compatible trace backends.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/ExportTraceServiceRequest'
+    ExportMetricsServiceRequest:
+      name: ExportMetricsServiceRequest
+      title: Export Metrics Service Request
+      summary: A batch of metric data points from one or more resources
+      description: >-
+        OTLP metrics export message containing a list of ResourceMetrics. Each
+        ResourceMetrics groups metric data points by the resource that produced
+        them, further organized by instrumentation scope. This payload is sent
+        from SDK metric exporters and Collector metric pipelines to OTLP-compatible
+        metrics backends.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/ExportMetricsServiceRequest'
+    ExportLogsServiceRequest:
+      name: ExportLogsServiceRequest
+      title: Export Logs Service Request
+      summary: A batch of log records from one or more resources
+      description: >-
+        OTLP log export message containing a list of ResourceLogs. Each
+        ResourceLogs groups log records by the resource that produced them,
+        further organized by instrumentation scope. This payload is sent from
+        SDK log exporters and Collector log pipelines to OTLP-compatible
+        log backends.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/ExportLogsServiceRequest'
+  schemas:
+    ExportTraceServiceRequest:
+      type: object
+      description: Request body for exporting a batch of trace spans
+      properties:
+        resourceSpans:
+          type: array
+          description: List of resource-grouped spans to export
+          items:
+            $ref: '#/components/schemas/ResourceSpans'
+    ExportMetricsServiceRequest:
+      type: object
+      description: Request body for exporting a batch of metric data points
+      properties:
+        resourceMetrics:
+          type: array
+          description: List of resource-grouped metrics to export
+          items:
+            $ref: '#/components/schemas/ResourceMetrics'
+    ExportLogsServiceRequest:
+      type: object
+      description: Request body for exporting a batch of log records
+      properties:
+        resourceLogs:
+          type: array
+          description: List of resource-grouped log records to export
+          items:
+            $ref: '#/components/schemas/ResourceLogs'
+    Resource:
+      type: object
+      description: >-
+        Describes the entity producing telemetry. Resources are identified by
+        attributes such as service.name, service.version, host.name, and
+        cloud.provider that distinguish one service instance from another.
+      properties:
+        attributes:
+          type: array
+          description: Key-value attributes describing this resource
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        droppedAttributesCount:
+          type: integer
+          description: Number of attributes dropped due to configured attribute limits
+          minimum: 0
+    InstrumentationScope:
+      type: object
+      description: >-
+        Metadata identifying the instrumentation library or component that produced
+        the telemetry. Typically the library name and version from an OpenTelemetry
+        SDK instrumentation package.
+      properties:
+        name:
+          type: string
+          description: Name of the instrumentation scope (e.g., io.opentelemetry.jdbc)
+        version:
+          type: string
+          description: Version of the instrumentation scope (e.g., 1.28.0)
+        attributes:
+          type: array
+          description: Attributes about this instrumentation scope
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        droppedAttributesCount:
+          type: integer
+          description: Number of scope attributes dropped due to limits
+          minimum: 0
+    ResourceSpans:
+      type: object
+      description: >-
+        A container grouping spans from a single resource. All spans within
+        a ResourceSpans share the same resource (service instance) metadata.
+      properties:
+        resource:
+          $ref: '#/components/schemas/Resource'
+        scopeSpans:
+          type: array
+          description: Spans organized by instrumentation scope
+          items:
+            $ref: '#/components/schemas/ScopeSpans'
+        schemaUrl:
+          type: string
+          description: >-
+            Schema URL identifying the semantic conventions version used for
+            this resource's attributes
+    ScopeSpans:
+      type: object
+      description: >-
+        A container grouping spans from a single instrumentation scope within
+        a resource. All spans share the same instrumentation library.
+      properties:
+        scope:
+          $ref: '#/components/schemas/InstrumentationScope'
+        spans:
+          type: array
+          description: List of spans from this instrumentation scope
+          items:
+            $ref: '#/components/schemas/Span'
+        schemaUrl:
+          type: string
+          description: Schema URL for the instrumentation scope's semantic conventions
+    Span:
+      type: object
+      description: >-
+        A single operation within a distributed trace, representing a unit of
+        work with start/end timing, semantic attributes, timed events, and
+        links to related spans. Spans form a tree structure through parent-child
+        relationships identified by traceId and parentSpanId.
+      required:
+        - traceId
+        - spanId
+        - name
+        - kind
+        - startTimeUnixNano
+        - endTimeUnixNano
+      properties:
+        traceId:
+          type: string
+          description: Globally unique 128-bit trace identifier encoded as 32 lowercase hex characters
+          pattern: '^[a-f0-9]{32}$'
+        spanId:
+          type: string
+          description: Unique 64-bit span identifier encoded as 16 lowercase hex characters
+          pattern: '^[a-f0-9]{16}$'
+        traceState:
+          type: string
+          description: W3C TraceState header providing vendor-specific trace context
+        parentSpanId:
+          type: string
+          description: Span ID of the parent span; empty string for root spans
+          pattern: '^([a-f0-9]{16})?$'
+        flags:
+          type: integer
+          description: W3C trace flags byte as defined in the W3C Trace Context specification
+        name:
+          type: string
+          description: Human-readable name describing the operation (e.g., "GET /api/users", "SELECT users")
+        kind:
+          type: integer
+          description: >-
+            Span kind indicating the relationship between spans: 0=UNSPECIFIED,
+            1=INTERNAL, 2=SERVER (incoming RPC), 3=CLIENT (outgoing RPC),
+            4=PRODUCER (async message sent), 5=CONSUMER (async message received)
+          enum: [0, 1, 2, 3, 4, 5]
+        startTimeUnixNano:
+          type: string
+          description: Start time of the operation in nanoseconds since Unix epoch
+          pattern: '^[0-9]+$'
+        endTimeUnixNano:
+          type: string
+          description: End time of the operation in nanoseconds since Unix epoch
+          pattern: '^[0-9]+$'
+        attributes:
+          type: array
+          description: >-
+            Key-value attributes providing semantic context about the operation,
+            following OpenTelemetry semantic conventions (e.g., http.method,
+            db.system, rpc.service)
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        droppedAttributesCount:
+          type: integer
+          description: Number of attributes dropped due to SDK attribute count limits
+          minimum: 0
+        events:
+          type: array
+          description: >-
+            Timed annotations within the span, commonly used to record exceptions
+            (event name "exception") and other notable moments during the operation
+          items:
+            $ref: '#/components/schemas/SpanEvent'
+        droppedEventsCount:
+          type: integer
+          description: Number of events dropped due to SDK event count limits
+          minimum: 0
+        links:
+          type: array
+          description: >-
+            References to causally related spans, used for linking async consumers
+            to their producers or for batch operations that fan in from multiple traces
+          items:
+            $ref: '#/components/schemas/SpanLink'
+        droppedLinksCount:
+          type: integer
+          description: Number of links dropped due to SDK link count limits
+          minimum: 0
+        status:
+          $ref: '#/components/schemas/SpanStatus'
+    SpanEvent:
+      type: object
+      description: A timed annotation within a span, often used to record exceptions or checkpoints
+      properties:
+        timeUnixNano:
+          type: string
+          description: Event timestamp in nanoseconds since Unix epoch
+          pattern: '^[0-9]+$'
+        name:
+          type: string
+          description: >-
+            Event name. Use "exception" for exception events with attributes
+            exception.type, exception.message, and exception.stacktrace.
+        attributes:
+          type: array
+          description: Attributes providing context about this event
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        droppedAttributesCount:
+          type: integer
+          minimum: 0
+    SpanLink:
+      type: object
+      description: A reference from one span to another in the same or a different trace
+      properties:
+        traceId:
+          type: string
+          description: Trace ID of the linked span
+          pattern: '^[a-f0-9]{32}$'
+        spanId:
+          type: string
+          description: Span ID of the linked span
+          pattern: '^[a-f0-9]{16}$'
+        traceState:
+          type: string
+          description: W3C TraceState of the linked span
+        attributes:
+          type: array
+          description: Attributes describing the relationship to the linked span
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        droppedAttributesCount:
+          type: integer
+          minimum: 0
+        flags:
+          type: integer
+    SpanStatus:
+      type: object
+      description: >-
+        Final status of the span indicating whether the operation succeeded or failed.
+        SDK instrumentation should set the status to ERROR when an exception is not
+        handled or when the operation fails.
+      properties:
+        message:
+          type: string
+          description: Human-readable description of the status (typically an error message)
+        code:
+          type: integer
+          description: >-
+            Status code: 0=STATUS_CODE_UNSET (default, no explicit status set),
+            1=STATUS_CODE_OK (operation explicitly succeeded), 2=STATUS_CODE_ERROR
+            (operation failed)
+          enum: [0, 1, 2]
+    ResourceMetrics:
+      type: object
+      description: >-
+        A container grouping metric data points from a single resource.
+        All metrics within a ResourceMetrics share the same resource metadata.
+      properties:
+        resource:
+          $ref: '#/components/schemas/Resource'
+        scopeMetrics:
+          type: array
+          description: Metrics organized by instrumentation scope
+          items:
+            $ref: '#/components/schemas/ScopeMetrics'
+        schemaUrl:
+          type: string
+          description: Schema URL for this resource's semantic convention version
+    ScopeMetrics:
+      type: object
+      description: Metrics from a single instrumentation scope within a resource
+      properties:
+        scope:
+          $ref: '#/components/schemas/InstrumentationScope'
+        metrics:
+          type: array
+          description: List of metrics from this instrumentation scope
+          items:
+            $ref: '#/components/schemas/Metric'
+        schemaUrl:
+          type: string
+          description: Schema URL for the instrumentation scope's semantic conventions
+    Metric:
+      type: object
+      description: >-
+        A single named metric with its data points. Contains exactly one of the
+        metric data types: Gauge, Sum, Histogram, ExponentialHistogram, or Summary.
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: >-
+            Metric name following OpenTelemetry naming conventions
+            (e.g., http.server.request.duration, system.cpu.utilization)
+        description:
+          type: string
+          description: Human-readable description of what this metric measures
+        unit:
+          type: string
+          description: >-
+            Unified Code for Units of Measure (UCUM) unit string
+            (e.g., "ms" for milliseconds, "By" for bytes, "1" for dimensionless)
+        gauge:
+          $ref: '#/components/schemas/Gauge'
+        sum:
+          $ref: '#/components/schemas/Sum'
+        histogram:
+          $ref: '#/components/schemas/Histogram'
+    Gauge:
+      type: object
+      description: >-
+        Gauge metric representing instantaneous measurements. Used for values
+        that can go up or down such as CPU utilization, memory usage, and
+        current queue depth.
+      properties:
+        dataPoints:
+          type: array
+          description: Individual gauge measurements with their timestamps and attribute sets
+          items:
+            $ref: '#/components/schemas/NumberDataPoint'
+    Sum:
+      type: object
+      description: >-
+        Sum metric representing monotonically increasing counters or delta counters.
+        Used for cumulative values like request counts, bytes sent, and error totals.
+      properties:
+        dataPoints:
+          type: array
+          description: Individual sum data points with their timestamps and attribute sets
+          items:
+            $ref: '#/components/schemas/NumberDataPoint'
+        aggregationTemporality:
+          type: integer
+          description: >-
+            Aggregation temporality: 1=DELTA (since last export),
+            2=CUMULATIVE (since process start or reset)
+          enum: [0, 1, 2]
+        isMonotonic:
+          type: boolean
+          description: Whether values in this sum only increase (true for counters, false for up-down counters)
+    Histogram:
+      type: object
+      description: >-
+        Histogram metric with explicit bucket boundaries for recording value distributions.
+        Used for latency, request sizes, and other distribution measurements.
+      properties:
+        dataPoints:
+          type: array
+          description: Individual histogram data points with bucket counts and boundaries
+          items:
+            $ref: '#/components/schemas/HistogramDataPoint'
+        aggregationTemporality:
+          type: integer
+          description: Aggregation temporality (1=DELTA, 2=CUMULATIVE)
+          enum: [0, 1, 2]
+    NumberDataPoint:
+      type: object
+      description: A single numeric data point for a Gauge or Sum metric
+      properties:
+        attributes:
+          type: array
+          description: Attribute set identifying this specific time series
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        startTimeUnixNano:
+          type: string
+          description: Start of the aggregation interval in nanoseconds since Unix epoch
+          pattern: '^[0-9]+$'
+        timeUnixNano:
+          type: string
+          description: End of the aggregation interval (or observation time) in nanoseconds since Unix epoch
+          pattern: '^[0-9]+$'
+        asDouble:
+          type: number
+          description: Numeric value as a double-precision float
+        asInt:
+          type: string
+          description: Numeric value as a 64-bit integer encoded as string
+          pattern: '^-?[0-9]+$'
+        flags:
+          type: integer
+          description: Bit flags indicating data point quality (e.g., FLAG_NO_RECORDED_VALUE)
+    HistogramDataPoint:
+      type: object
+      description: A single histogram data point recording a distribution of values
+      properties:
+        attributes:
+          type: array
+          description: Attribute set identifying this specific histogram time series
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        startTimeUnixNano:
+          type: string
+          description: Start of the aggregation interval in nanoseconds since Unix epoch
+          pattern: '^[0-9]+$'
+        timeUnixNano:
+          type: string
+          description: End of the aggregation interval in nanoseconds since Unix epoch
+          pattern: '^[0-9]+$'
+        count:
+          type: string
+          description: Total number of values recorded in this histogram data point
+          pattern: '^[0-9]+$'
+        sum:
+          type: number
+          description: Sum of all recorded values
+        bucketCounts:
+          type: array
+          description: >-
+            Count of values falling in each bucket. Length must be
+            explicitBounds.length + 1 (the last bucket captures all values
+            above the final boundary).
+          items:
+            type: string
+            pattern: '^[0-9]+$'
+        explicitBounds:
+          type: array
+          description: >-
+            Upper boundaries for each bucket in increasing order. Values
+            equal to a boundary go into the lower bucket.
+          items:
+            type: number
+        min:
+          type: number
+          description: Minimum value recorded in this data point
+        max:
+          type: number
+          description: Maximum value recorded in this data point
+    ResourceLogs:
+      type: object
+      description: >-
+        A container grouping log records from a single resource.
+        All log records within a ResourceLogs share the same resource metadata.
+      properties:
+        resource:
+          $ref: '#/components/schemas/Resource'
+        scopeLogs:
+          type: array
+          description: Log records organized by instrumentation scope
+          items:
+            $ref: '#/components/schemas/ScopeLogs'
+        schemaUrl:
+          type: string
+          description: Schema URL for this resource's semantic convention version
+    ScopeLogs:
+      type: object
+      description: Log records from a single instrumentation scope within a resource
+      properties:
+        scope:
+          $ref: '#/components/schemas/InstrumentationScope'
+        logRecords:
+          type: array
+          description: List of log records from this instrumentation scope
+          items:
+            $ref: '#/components/schemas/LogRecord'
+        schemaUrl:
+          type: string
+          description: Schema URL for the instrumentation scope's semantic conventions
+    LogRecord:
+      type: object
+      description: >-
+        A single log record representing a timestamped event with severity level,
+        structured body content, and optional trace context for correlating logs
+        with distributed traces.
+      properties:
+        timeUnixNano:
+          type: string
+          description: Timestamp when the log event occurred in nanoseconds since Unix epoch
+          pattern: '^[0-9]+$'
+        observedTimeUnixNano:
+          type: string
+          description: Timestamp when the log was observed by the collection system in nanoseconds
+          pattern: '^[0-9]+$'
+        severityNumber:
+          type: integer
+          description: >-
+            Numeric severity from 1 (TRACE) to 24 (FATAL4). Maps to:
+            1-4=TRACE, 5-8=DEBUG, 9-12=INFO, 13-16=WARN, 17-20=ERROR, 21-24=FATAL
+          minimum: 1
+          maximum: 24
+        severityText:
+          type: string
+          description: >-
+            Human-readable severity text (e.g., "TRACE", "DEBUG", "INFO",
+            "WARN", "ERROR", "FATAL")
+        body:
+          $ref: '#/components/schemas/AnyValue'
+        attributes:
+          type: array
+          description: >-
+            Key-value attributes providing additional context about this log record,
+            following OpenTelemetry log semantic conventions
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        droppedAttributesCount:
+          type: integer
+          description: Number of attributes dropped due to configured attribute limits
+          minimum: 0
+        flags:
+          type: integer
+          description: Trace flags byte for log-trace correlation
+        traceId:
+          type: string
+          description: >-
+            Trace ID linking this log record to a distributed trace.
+            Encoded as 32 lowercase hex characters.
+          pattern: '^([a-f0-9]{32})?$'
+        spanId:
+          type: string
+          description: >-
+            Span ID linking this log record to a specific span within a trace.
+            Encoded as 16 lowercase hex characters.
+          pattern: '^([a-f0-9]{16})?$'
+    KeyValue:
+      type: object
+      description: A key-value attribute pair following OpenTelemetry semantic conventions
+      required:
+        - key
+        - value
+      properties:
+        key:
+          type: string
+          description: >-
+            Attribute key following OpenTelemetry semantic convention naming
+            (e.g., service.name, http.request.method, db.system)
+        value:
+          $ref: '#/components/schemas/AnyValue'
+    AnyValue:
+      type: object
+      description: >-
+        A polymorphic value container supporting all OTLP attribute value types:
+        string, boolean, 64-bit integer (as string), double, array of AnyValues,
+        key-value list, or base64-encoded bytes.
+      properties:
+        stringValue:
+          type: string
+          description: String attribute value
+        boolValue:
+          type: boolean
+          description: Boolean attribute value
+        intValue:
+          type: string
+          description: 64-bit integer value encoded as a decimal string
+          pattern: '^-?[0-9]+$'
+        doubleValue:
+          type: number
+          description: Double-precision floating point attribute value
+        arrayValue:
+          type: object
+          description: Array of AnyValues for multi-valued attributes
+          properties:
+            values:
+              type: array
+              items:
+                $ref: '#/components/schemas/AnyValue'
+        kvlistValue:
+          type: object
+          description: Key-value list for structured attribute values
+          properties:
+            values:
+              type: array
+              items:
+                $ref: '#/components/schemas/KeyValue'
+        bytesValue:
+          type: string
+          description: Binary data encoded as base64 string
+          contentEncoding: base64
