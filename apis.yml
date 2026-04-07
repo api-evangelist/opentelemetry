@@ -9,13 +9,13 @@ position: Consumer
 access: 3rd-Party
 image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
 tags:
-  - Observability
-  - Monitoring
-  - Tracing
-  - Metrics
-  - Logging
   - Cloud Native
+  - Logging
+  - Metrics
+  - Monitoring
+  - Observability
   - Open Source
+  - Tracing
 created: '2025-01-01'
 modified: '2026-03-18'
 url: >-
@@ -31,10 +31,10 @@ apis:
       and observability backends.
     humanURL: https://opentelemetry.io/docs/specs/otlp/
     tags:
+      - Logging
+      - Metrics
       - Observability
       - Tracing
-      - Metrics
-      - Logging
     properties:
       - type: Documentation
         url: https://opentelemetry.io/docs/specs/otlp/
@@ -63,10 +63,10 @@ apis:
     humanURL: https://opentelemetry.io/docs/specs/otlp/#otlpgrpc
     tags:
       - gRPC
+      - Logging
+      - Metrics
       - Observability
       - Tracing
-      - Metrics
-      - Logging
     properties:
       - type: Documentation
         url: https://opentelemetry.io/docs/specs/otlp/#otlpgrpc
@@ -85,9 +85,9 @@ apis:
     humanURL: https://opentelemetry.io/docs/collector/
     tags:
       - Collector
-      - Pipeline
-      - Observability
       - Configuration
+      - Observability
+      - Pipeline
     properties:
       - type: Documentation
         url: https://opentelemetry.io/docs/collector/
@@ -106,11 +106,11 @@ apis:
       others.
     humanURL: https://opentelemetry.io/docs/specs/otel/
     tags:
-      - SDK
       - Instrumentation
-      - Tracing
-      - Metrics
       - Logging
+      - Metrics
+      - SDK
+      - Tracing
     properties:
       - type: Documentation
         url: https://opentelemetry.io/docs/specs/otel/

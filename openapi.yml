@@ -868,3 +868,7 @@ components:
       type: http
       scheme: bearer
       description: Bearer token authentication for secured OTLP endpoints
+tags:
+  - name: Logs
+  - name: Metrics
+  - name: Traces
