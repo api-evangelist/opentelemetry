@@ -21,7 +21,7 @@ paths:
   /v1/traces:
     post:
       operationId: exportTraces
-      summary: Export trace data
+      summary: OpenTelemetry Export trace data
       description: >-
         Accepts a batch of spans encoded in OTLP format. Each span
         represents a unit of work or operation within a distributed
@@ -71,7 +71,7 @@ paths:
   /v1/metrics:
     post:
       operationId: exportMetrics
-      summary: Export metric data
+      summary: OpenTelemetry Export metric data
       description: >-
         Accepts a batch of metrics encoded in OTLP format. Metrics
         represent measurements captured at runtime, including gauges,
@@ -122,7 +122,7 @@ paths:
   /v1/logs:
     post:
       operationId: exportLogs
-      summary: Export log data
+      summary: OpenTelemetry Export log data
       description: >-
         Accepts a batch of log records encoded in OTLP format. Log
         records represent timestamped text or structured data entries
