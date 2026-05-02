@@ -5,18 +5,18 @@ Vendor-neutral open-source observability framework for cloud-native software, pr
 
 ## Scope
 
-- **Type:** Index 
-- **Position:** Consuming 
-- **Access:** 3rd-Party 
+- **Type:** Index
+- **Position:** Consumer
+- **Access:** 3rd-Party
 
 ## Tags:
 
- - Observability, Monitoring, Tracing, Metrics, Logging, Cloud Native, Open Source
+ - Cloud Native, Logging, Metrics, Monitoring, Observability, Open Source, Tracing
 
 ## Timestamps
 
-- **Created:** 2025-01-01 
-- **Modified:** 2026-03-18 
+- **Created:** 2025-01-01
+- **Modified:** 2026-04-28
 
 ## APIs
 
@@ -25,10 +25,9 @@ The OTLP HTTP API provides endpoints for exporting traces, metrics, and logs usi
 
 **Human URL:** [https://opentelemetry.io/docs/specs/otlp/](https://opentelemetry.io/docs/specs/otlp/)
 
-
 #### Tags:
 
- - Observability, Tracing, Metrics, Logging
+ - Logging, Metrics, Observability, Tracing
 
 #### Properties
 
@@ -46,10 +45,9 @@ The OTLP gRPC API defines Protocol Buffers service definitions for exporting tra
 
 **Human URL:** [https://opentelemetry.io/docs/specs/otlp/#otlpgrpc](https://opentelemetry.io/docs/specs/otlp/#otlpgrpc)
 
-
 #### Tags:
 
- - gRPC, Observability, Tracing, Metrics, Logging
+ - gRPC, Logging, Metrics, Observability, Tracing
 
 #### Properties
 
@@ -62,10 +60,9 @@ The OpenTelemetry Collector is a vendor-agnostic proxy for receiving, processing
 
 **Human URL:** [https://opentelemetry.io/docs/collector/](https://opentelemetry.io/docs/collector/)
 
-
 #### Tags:
 
- - Collector, Pipeline, Observability, Configuration
+ - Collector, Configuration, Observability, Pipeline
 
 #### Properties
 
@@ -78,10 +75,9 @@ The OpenTelemetry SDK API specifies language-level interfaces for instrumentatio
 
 **Human URL:** [https://opentelemetry.io/docs/specs/otel/](https://opentelemetry.io/docs/specs/otel/)
 
-
 #### Tags:
 
- - SDK, Instrumentation, Tracing, Metrics, Logging
+ - Instrumentation, Logging, Metrics, SDK, Tracing
 
 #### Properties
 
