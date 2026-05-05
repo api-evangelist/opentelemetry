@@ -1,0 +1,13 @@
+{
+  "repo": "opentelemetry",
+  "feeds": [
+    {
+      "source": "https://opentelemetry.io/blog/",
+      "feed_url": "https://opentelemetry.io/blog/index.xml",
+      "saved": 10,
+      "title": "Blog on OpenTelemetry"
+    }
+  ],
+  "post_count": 10,
+  "fetched": "2026-05-03T23:33:02Z"
+}
