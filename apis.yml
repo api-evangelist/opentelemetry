@@ -169,6 +169,14 @@ common:
     name: Security
     type: Security
     description: Security disclosure policy for the OpenTelemetry project.
+  - type: Integrations
+    url: https://opentelemetry.io/ecosystem/integrations/
+integrations:
+  - name: English EN
+  - name: Registry
+  - name: Adopters
+  - name: Distributions
+  - name: Vendors
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
