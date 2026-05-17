@@ -44,11 +44,11 @@ apis:
         url: asyncapi/opentelemetry-otlp-asyncapi.yml
       - type: JSONSchema
         url: json-schema.json
-      - type: JSON-LD
+      - type: JSONLD
         url: context.jsonld
       - type: Reference
         url: https://opentelemetry.io/docs/specs/otlp/#otlphttp
-      - type: Getting Started
+      - type: GettingStarted
         url: https://opentelemetry.io/docs/collector/
       - type: Client Libraries
         url: https://opentelemetry.io/docs/languages/
@@ -131,11 +131,11 @@ common:
     description: Official OpenTelemetry documentation hub.
   - url: https://opentelemetry.io/docs/getting-started/
     name: Getting Started
-    type: Getting Started
+    type: GettingStarted
     description: Guides for getting started with OpenTelemetry instrumentation.
   - url: https://github.com/open-telemetry
     name: GitHub Organization
-    type: GitHub Organization
+    type: GitHubOrganization
     description: OpenTelemetry GitHub organization containing all project repositories.
   - url: https://github.com/open-telemetry/opentelemetry-specification
     name: OpenTelemetry Specification
@@ -159,11 +159,11 @@ common:
     description: OpenTelemetry community Slack channel in the CNCF Slack workspace.
   - url: https://stackoverflow.com/questions/tagged/open-telemetry
     name: Stack Overflow
-    type: Stack Overflow
+    type: StackOverflow
     description: OpenTelemetry-tagged questions and answers on Stack Overflow.
   - url: https://github.com/open-telemetry/opentelemetry-specification/blob/main/CHANGELOG.md
     name: Change Log
-    type: Change Log
+    type: ChangeLog
     description: Changelog for the OpenTelemetry specification.
   - url: https://github.com/open-telemetry/opentelemetry-collector/security/policy
     name: Security
