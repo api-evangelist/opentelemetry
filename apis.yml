@@ -173,6 +173,8 @@ common:
     description: Security disclosure policy for the OpenTelemetry project.
   - type: Integrations
     url: https://opentelemetry.io/ecosystem/integrations/
+  - type: LLMsTxt
+    url: https://opentelemetry.io/llms.txt
 integrations:
   - name: English EN
   - name: Registry
