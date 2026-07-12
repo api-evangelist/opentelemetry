@@ -121,6 +121,8 @@ apis:
       - type: GitHubRepository
         url: https://github.com/open-telemetry/opentelemetry-specification
 common:
+  - type: DomainSecurity
+    url: security/opentelemetry-domain-security.yml
   - type: LinkedIn
     url: https://www.linkedin.com/company/opentelemetry
   - url: https://opentelemetry.io/
