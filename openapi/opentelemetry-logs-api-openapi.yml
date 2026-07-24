@@ -1,0 +1,248 @@
+openapi: 3.1.0
+info:
+  title: OpenTelemetry Protocol (OTLP) HTTP Logs API
+  description: The OpenTelemetry Protocol (OTLP) HTTP API provides endpoints for receiving telemetry data including traces, metrics, and logs. OTLP is the native protocol for OpenTelemetry and defines how telemetry data is encoded, transported, and delivered between telemetry sources, collectors, and backends.
+  version: 1.0.0
+  contact:
+    name: OpenTelemetry
+    url: https://opentelemetry.io
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+servers:
+- url: http://localhost:4318
+  description: Default OTLP HTTP receiver endpoint
+tags:
+- name: Logs
+paths:
+  /v1/logs:
+    post:
+      operationId: exportLogs
+      summary: OpenTelemetry Export log data
+      description: Accepts a batch of log records encoded in OTLP format. Log records represent timestamped text or structured data entries with severity levels, associated resource metadata, and optional trace context for correlation.
+      tags:
+      - Logs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExportLogsServiceRequest'
+          application/x-protobuf:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: Successfully accepted log data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExportLogsServiceResponse'
+        '400':
+          description: Bad request - malformed payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+        '429':
+          description: Too many requests - rate limited
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+              description: Seconds to wait before retrying
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+components:
+  schemas:
+    InstrumentationScope:
+      type: object
+      description: Metadata about the instrumentation library or component that produced the telemetry data.
+      properties:
+        name:
+          type: string
+          description: Instrumentation scope name
+        version:
+          type: string
+          description: Instrumentation scope version
+        attributes:
+          type: array
+          description: Scope attributes
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        droppedAttributesCount:
+          type: integer
+          format: int32
+    Resource:
+      type: object
+      description: Describes the entity producing telemetry. A resource has attributes such as service.name, service.version, host.name, and other identifying metadata.
+      properties:
+        attributes:
+          type: array
+          description: Resource attributes
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        droppedAttributesCount:
+          type: integer
+          format: int32
+    ScopeLogs:
+      type: object
+      description: Logs associated with an instrumentation scope
+      properties:
+        scope:
+          $ref: '#/components/schemas/InstrumentationScope'
+        logRecords:
+          type: array
+          description: List of log records
+          items:
+            $ref: '#/components/schemas/LogRecord'
+        schemaUrl:
+          type: string
+          description: Schema URL for the instrumentation scope
+    ExportLogsPartialSuccess:
+      type: object
+      description: Indicates partial success when some log records were rejected
+      properties:
+        rejectedLogRecords:
+          type: integer
+          format: int64
+          description: Number of log records rejected
+        errorMessage:
+          type: string
+          description: Human-readable error message
+    LogRecord:
+      type: object
+      description: A single log record representing a timestamped event with severity, body content, and associated metadata.
+      properties:
+        timeUnixNano:
+          type: string
+          format: uint64
+          description: Log timestamp in nanoseconds since Unix epoch
+        observedTimeUnixNano:
+          type: string
+          format: uint64
+          description: Time when the log was observed by the collection system
+        severityNumber:
+          type: integer
+          description: Numeric severity value (1-24)
+          minimum: 1
+          maximum: 24
+        severityText:
+          type: string
+          description: Severity text (e.g., TRACE, DEBUG, INFO, WARN, ERROR, FATAL)
+        body:
+          $ref: '#/components/schemas/AnyValue'
+        attributes:
+          type: array
+          description: Additional log attributes
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        droppedAttributesCount:
+          type: integer
+          format: int32
+        flags:
+          type: integer
+          format: int32
+          description: Trace flags for log-trace correlation
+        traceId:
+          type: string
+          description: Trace ID for correlating logs with traces
+        spanId:
+          type: string
+          description: Span ID for correlating logs with spans
+    ExportLogsServiceResponse:
+      type: object
+      description: Response message for the logs export service
+      properties:
+        partialSuccess:
+          $ref: '#/components/schemas/ExportLogsPartialSuccess'
+    AnyValue:
+      type: object
+      description: A polymorphic value container that can hold string, bool, int, double, array, or key-value list values.
+      properties:
+        stringValue:
+          type: string
+        boolValue:
+          type: boolean
+        intValue:
+          type: string
+          format: int64
+        doubleValue:
+          type: number
+          format: double
+        arrayValue:
+          type: object
+          properties:
+            values:
+              type: array
+              items:
+                $ref: '#/components/schemas/AnyValue'
+        kvlistValue:
+          type: object
+          properties:
+            values:
+              type: array
+              items:
+                $ref: '#/components/schemas/KeyValue'
+        bytesValue:
+          type: string
+          format: byte
+    Status:
+      type: object
+      description: Error status response
+      properties:
+        code:
+          type: integer
+          description: HTTP status code
+        message:
+          type: string
+          description: Human-readable error message
+    ResourceLogs:
+      type: object
+      description: Collection of logs from a resource
+      properties:
+        resource:
+          $ref: '#/components/schemas/Resource'
+        scopeLogs:
+          type: array
+          description: Logs grouped by instrumentation scope
+          items:
+            $ref: '#/components/schemas/ScopeLogs'
+        schemaUrl:
+          type: string
+          description: Schema URL for the resource
+    KeyValue:
+      type: object
+      description: A key-value pair for attributes
+      required:
+      - key
+      - value
+      properties:
+        key:
+          type: string
+          description: Attribute key
+        value:
+          $ref: '#/components/schemas/AnyValue'
+    ExportLogsServiceRequest:
+      type: object
+      description: Request message for the logs export service
+      properties:
+        resourceLogs:
+          type: array
+          description: Batch of resource logs
+          items:
+            $ref: '#/components/schemas/ResourceLogs'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer token authentication for secured OTLP endpoints

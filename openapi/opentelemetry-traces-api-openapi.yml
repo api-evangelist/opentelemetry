@@ -1,0 +1,345 @@
+openapi: 3.1.0
+info:
+  title: OpenTelemetry Protocol (OTLP) HTTP Traces API
+  description: The OpenTelemetry Protocol (OTLP) HTTP API provides endpoints for receiving telemetry data including traces, metrics, and logs. OTLP is the native protocol for OpenTelemetry and defines how telemetry data is encoded, transported, and delivered between telemetry sources, collectors, and backends.
+  version: 1.0.0
+  contact:
+    name: OpenTelemetry
+    url: https://opentelemetry.io
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+servers:
+- url: http://localhost:4318
+  description: Default OTLP HTTP receiver endpoint
+tags:
+- name: Traces
+paths:
+  /v1/traces:
+    post:
+      operationId: exportTraces
+      summary: OpenTelemetry Export trace data
+      description: Accepts a batch of spans encoded in OTLP format. Each span represents a unit of work or operation within a distributed trace, containing timing data, attributes, events, and links.
+      tags:
+      - Traces
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExportTraceServiceRequest'
+          application/x-protobuf:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: Successfully accepted trace data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExportTraceServiceResponse'
+        '400':
+          description: Bad request - malformed payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+        '429':
+          description: Too many requests - rate limited
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+              description: Seconds to wait before retrying
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+components:
+  schemas:
+    ScopeSpans:
+      type: object
+      description: Spans associated with an instrumentation scope
+      properties:
+        scope:
+          $ref: '#/components/schemas/InstrumentationScope'
+        spans:
+          type: array
+          description: List of spans
+          items:
+            $ref: '#/components/schemas/Span'
+        schemaUrl:
+          type: string
+          description: Schema URL for the instrumentation scope
+    InstrumentationScope:
+      type: object
+      description: Metadata about the instrumentation library or component that produced the telemetry data.
+      properties:
+        name:
+          type: string
+          description: Instrumentation scope name
+        version:
+          type: string
+          description: Instrumentation scope version
+        attributes:
+          type: array
+          description: Scope attributes
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        droppedAttributesCount:
+          type: integer
+          format: int32
+    ExportTraceServiceResponse:
+      type: object
+      description: Response message for the trace export service
+      properties:
+        partialSuccess:
+          $ref: '#/components/schemas/ExportTracePartialSuccess'
+    ExportTraceServiceRequest:
+      type: object
+      description: Request message for the trace export service
+      properties:
+        resourceSpans:
+          type: array
+          description: Batch of resource spans
+          items:
+            $ref: '#/components/schemas/ResourceSpans'
+    Span:
+      type: object
+      description: A span represents a single operation within a trace. Spans can be nested to form a trace tree. Each span has a name, timing data, structured log messages (events), and links to other spans.
+      required:
+      - traceId
+      - spanId
+      - name
+      - kind
+      - startTimeUnixNano
+      - endTimeUnixNano
+      properties:
+        traceId:
+          type: string
+          description: Unique 16-byte trace identifier as 32 hex characters
+          pattern: ^[a-f0-9]{32}$
+        spanId:
+          type: string
+          description: Unique 8-byte span identifier as 16 hex characters
+          pattern: ^[a-f0-9]{16}$
+        traceState:
+          type: string
+          description: W3C trace state header value
+        parentSpanId:
+          type: string
+          description: Span ID of the parent span (empty for root spans)
+          pattern: ^[a-f0-9]{16}$
+        flags:
+          type: integer
+          format: int32
+          description: Trace flags as defined in W3C Trace Context
+        name:
+          type: string
+          description: Human-readable name of the span
+        kind:
+          type: integer
+          description: 'Span kind: 0=unspecified, 1=internal, 2=server, 3=client, 4=producer, 5=consumer'
+          enum:
+          - 0
+          - 1
+          - 2
+          - 3
+          - 4
+          - 5
+        startTimeUnixNano:
+          type: string
+          format: uint64
+          description: Start time in nanoseconds since Unix epoch
+        endTimeUnixNano:
+          type: string
+          format: uint64
+          description: End time in nanoseconds since Unix epoch
+        attributes:
+          type: array
+          description: Key-value pairs providing additional span context
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        droppedAttributesCount:
+          type: integer
+          format: int32
+          description: Number of attributes dropped due to limits
+        events:
+          type: array
+          description: Timed events associated with the span
+          items:
+            $ref: '#/components/schemas/SpanEvent'
+        droppedEventsCount:
+          type: integer
+          format: int32
+          description: Number of events dropped due to limits
+        links:
+          type: array
+          description: Links to other spans in the same or different traces
+          items:
+            $ref: '#/components/schemas/SpanLink'
+        droppedLinksCount:
+          type: integer
+          format: int32
+          description: Number of links dropped due to limits
+        status:
+          $ref: '#/components/schemas/SpanStatus'
+    Resource:
+      type: object
+      description: Describes the entity producing telemetry. A resource has attributes such as service.name, service.version, host.name, and other identifying metadata.
+      properties:
+        attributes:
+          type: array
+          description: Resource attributes
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        droppedAttributesCount:
+          type: integer
+          format: int32
+    SpanEvent:
+      type: object
+      description: A timed event within a span
+      properties:
+        timeUnixNano:
+          type: string
+          format: uint64
+          description: Event timestamp in nanoseconds since Unix epoch
+        name:
+          type: string
+          description: Event name
+        attributes:
+          type: array
+          description: Event attributes
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        droppedAttributesCount:
+          type: integer
+          format: int32
+    AnyValue:
+      type: object
+      description: A polymorphic value container that can hold string, bool, int, double, array, or key-value list values.
+      properties:
+        stringValue:
+          type: string
+        boolValue:
+          type: boolean
+        intValue:
+          type: string
+          format: int64
+        doubleValue:
+          type: number
+          format: double
+        arrayValue:
+          type: object
+          properties:
+            values:
+              type: array
+              items:
+                $ref: '#/components/schemas/AnyValue'
+        kvlistValue:
+          type: object
+          properties:
+            values:
+              type: array
+              items:
+                $ref: '#/components/schemas/KeyValue'
+        bytesValue:
+          type: string
+          format: byte
+    ResourceSpans:
+      type: object
+      description: Collection of spans from a resource
+      properties:
+        resource:
+          $ref: '#/components/schemas/Resource'
+        scopeSpans:
+          type: array
+          description: Spans grouped by instrumentation scope
+          items:
+            $ref: '#/components/schemas/ScopeSpans'
+        schemaUrl:
+          type: string
+          description: Schema URL for the resource
+    ExportTracePartialSuccess:
+      type: object
+      description: Indicates partial success when some spans were rejected
+      properties:
+        rejectedSpans:
+          type: integer
+          format: int64
+          description: Number of spans rejected
+        errorMessage:
+          type: string
+          description: Human-readable error message
+    Status:
+      type: object
+      description: Error status response
+      properties:
+        code:
+          type: integer
+          description: HTTP status code
+        message:
+          type: string
+          description: Human-readable error message
+    KeyValue:
+      type: object
+      description: A key-value pair for attributes
+      required:
+      - key
+      - value
+      properties:
+        key:
+          type: string
+          description: Attribute key
+        value:
+          $ref: '#/components/schemas/AnyValue'
+    SpanLink:
+      type: object
+      description: A reference from one span to another
+      properties:
+        traceId:
+          type: string
+          description: Trace ID of the linked span
+        spanId:
+          type: string
+          description: Span ID of the linked span
+        traceState:
+          type: string
+          description: W3C trace state of the linked span
+        attributes:
+          type: array
+          description: Link attributes
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        droppedAttributesCount:
+          type: integer
+          format: int32
+        flags:
+          type: integer
+          format: int32
+    SpanStatus:
+      type: object
+      description: Status of the span
+      properties:
+        message:
+          type: string
+          description: Human-readable status message
+        code:
+          type: integer
+          description: 'Status code: 0=unset, 1=ok, 2=error'
+          enum:
+          - 0
+          - 1
+          - 2
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer token authentication for secured OTLP endpoints
