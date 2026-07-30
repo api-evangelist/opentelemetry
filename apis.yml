@@ -5,9 +5,21 @@ description: >-
   providing a collection of tools, APIs, and SDKs for instrumenting, generating,
   collecting, and exporting telemetry data including metrics, logs, and traces.
 type: Index
+accessModel:
+  pricing: freemium
+  onboarding: unknown
+  trial: false
+  try_now: false
+  public: false
+  label: Freemium
+  confidence: medium
+  source:
+  - plans
+  generated: '2026-07-22'
+  method: derived
 position: Consumer
 access: 3rd-Party
-image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/opentelemetry.png
 tags:
   - Cloud Native
   - Logging
@@ -22,104 +34,139 @@ url: >-
   https://raw.githubusercontent.com/api-evangelist/opentelemetry/refs/heads/main/apis.yml
 specificationVersion: '0.19'
 apis:
-  - aid: opentelemetry:opentelemetry-protocol-otlp-http-api
-    name: OpenTelemetry Protocol (OTLP) HTTP API
-    description: >-
-      The OTLP HTTP API provides endpoints for exporting traces, metrics, and
-      logs using the OpenTelemetry Protocol, the native wire format for
-      transmitting telemetry data between instrumented applications, collectors,
-      and observability backends.
-    humanURL: https://opentelemetry.io/docs/specs/otlp/
-    tags:
-      - Logging
-      - Metrics
-      - Observability
-      - Tracing
-    properties:
-      - type: Documentation
-        url: https://opentelemetry.io/docs/specs/otlp/
-      - type: OpenAPI
-        url: openapi.yml
-      - type: AsyncAPI
-        url: asyncapi/opentelemetry-otlp-asyncapi.yml
-      - type: JSONSchema
-        url: json-schema.json
-      - type: JSONLD
-        url: context.jsonld
-      - type: Reference
-        url: https://opentelemetry.io/docs/specs/otlp/#otlphttp
-      - type: GettingStarted
-        url: https://opentelemetry.io/docs/collector/
-      - type: Client Libraries
-        url: https://opentelemetry.io/docs/languages/
-  - aid: opentelemetry:opentelemetry-protocol-otlp-grpc-api
-    name: OpenTelemetry Protocol (OTLP) gRPC API
-    description: >-
-      The OTLP gRPC API defines Protocol Buffers service definitions for
-      exporting traces, metrics, and logs over gRPC. It is the primary
-      transport for OpenTelemetry data between SDK instrumentation, the
-      OpenTelemetry Collector, and observability backends, offering
-      bidirectional streaming and efficient binary encoding.
-    humanURL: https://opentelemetry.io/docs/specs/otlp/#otlpgrpc
-    tags:
-      - gRPC
-      - Logging
-      - Metrics
-      - Observability
-      - Tracing
-    properties:
-      - type: Documentation
-        url: https://opentelemetry.io/docs/specs/otlp/#otlpgrpc
-      - type: Reference
-        url: https://opentelemetry.io/docs/specs/otlp/#otlpgrpc-response
-      - type: GitHubRepository
-        url: https://github.com/open-telemetry/opentelemetry-proto
-  - aid: opentelemetry:opentelemetry-collector-api
-    name: OpenTelemetry Collector API
-    description: >-
-      The OpenTelemetry Collector is a vendor-agnostic proxy for receiving,
-      processing, and exporting telemetry data. It exposes HTTP and gRPC
-      endpoints for receiving OTLP data and provides a configuration API
-      for managing pipelines, receivers, processors, and exporters at runtime
-      via the zPages diagnostic extension and config file hot-reloading.
-    humanURL: https://opentelemetry.io/docs/collector/
-    tags:
-      - Collector
-      - Configuration
-      - Observability
-      - Pipeline
-    properties:
-      - type: Documentation
-        url: https://opentelemetry.io/docs/collector/
-      - type: Reference
-        url: https://opentelemetry.io/docs/collector/configuration/
-      - type: GitHubRepository
-        url: https://github.com/open-telemetry/opentelemetry-collector
-  - aid: opentelemetry:opentelemetry-sdk-api
-    name: OpenTelemetry SDK API
-    description: >-
-      The OpenTelemetry SDK API specifies language-level interfaces for
-      instrumentation, including the Tracer, Meter, and Logger APIs used
-      by application code to create spans, record metrics, and emit log
-      records. Implementations are available for all major programming
-      languages including Java, Python, Go, JavaScript, .NET, Ruby, and
-      others.
-    humanURL: https://opentelemetry.io/docs/specs/otel/
-    tags:
-      - Instrumentation
-      - Logging
-      - Metrics
-      - SDK
-      - Tracing
-    properties:
-      - type: Documentation
-        url: https://opentelemetry.io/docs/specs/otel/
-      - type: Reference
-        url: https://opentelemetry.io/docs/specs/otel/trace/api/
-      - type: Client Libraries
-        url: https://opentelemetry.io/docs/languages/
-      - type: GitHubRepository
-        url: https://github.com/open-telemetry/opentelemetry-specification
+- aid: opentelemetry:opentelemetry-protocol-otlp-grpc-api
+  name: OpenTelemetry Protocol (OTLP) gRPC API
+  description: >-
+    The OTLP gRPC API defines Protocol Buffers service definitions for exporting traces, metrics, and
+    logs over gRPC. It is the primary transport for OpenTelemetry data between SDK instrumentation, the
+    OpenTelemetry Collector, and observability backends, offering bidirectional streaming and efficient
+    binary encoding.
+  humanURL: https://opentelemetry.io/docs/specs/otlp/#otlpgrpc
+  tags:
+  - gRPC
+  - Logging
+  - Metrics
+  - Observability
+  - Tracing
+  properties:
+  - type: Documentation
+    url: https://opentelemetry.io/docs/specs/otlp/#otlpgrpc
+  - type: Reference
+    url: https://opentelemetry.io/docs/specs/otlp/#otlpgrpc-response
+  - type: GitHubRepository
+    url: https://github.com/open-telemetry/opentelemetry-proto
+- aid: opentelemetry:opentelemetry-collector-api
+  name: OpenTelemetry Collector API
+  description: >-
+    The OpenTelemetry Collector is a vendor-agnostic proxy for receiving, processing, and exporting telemetry
+    data. It exposes HTTP and gRPC endpoints for receiving OTLP data and provides a configuration API
+    for managing pipelines, receivers, processors, and exporters at runtime via the zPages diagnostic
+    extension and config file hot-reloading.
+  humanURL: https://opentelemetry.io/docs/collector/
+  tags:
+  - Collector
+  - Configuration
+  - Observability
+  - Pipeline
+  properties:
+  - type: Documentation
+    url: https://opentelemetry.io/docs/collector/
+  - type: Reference
+    url: https://opentelemetry.io/docs/collector/configuration/
+  - type: GitHubRepository
+    url: https://github.com/open-telemetry/opentelemetry-collector
+- aid: opentelemetry:opentelemetry-sdk-api
+  name: OpenTelemetry SDK API
+  description: >-
+    The OpenTelemetry SDK API specifies language-level interfaces for instrumentation, including the Tracer,
+    Meter, and Logger APIs used by application code to create spans, record metrics, and emit log records.
+    Implementations are available for all major programming languages including Java, Python, Go, JavaScript,
+    .NET, Ruby, and others.
+  humanURL: https://opentelemetry.io/docs/specs/otel/
+  tags:
+  - Instrumentation
+  - Logging
+  - Metrics
+  - SDK
+  - Tracing
+  properties:
+  - type: Documentation
+    url: https://opentelemetry.io/docs/specs/otel/
+  - type: Reference
+    url: https://opentelemetry.io/docs/specs/otel/trace/api/
+  - type: Client Libraries
+    url: https://opentelemetry.io/docs/languages/
+  - type: GitHubRepository
+    url: https://github.com/open-telemetry/opentelemetry-specification
+- aid: opentelemetry:opentelemetry-logs-api
+  name: OpenTelemetry Logs API
+  description: The Logs API from OpenTelemetry — 1 operation(s) for logs.
+  humanURL: https://opentelemetry.io/docs/specs/otlp/
+  tags:
+  - Logs
+  properties:
+  - type: OpenAPI
+    url: openapi/opentelemetry-logs-api-openapi.yml
+  - type: Documentation
+    url: https://opentelemetry.io/docs/specs/otlp/
+  - type: AsyncAPI
+    url: asyncapi/opentelemetry-otlp-asyncapi.yml
+  - type: JSONSchema
+    url: json-schema.json
+  - type: JSONLD
+    url: context.jsonld
+  - type: Reference
+    url: https://opentelemetry.io/docs/specs/otlp/#otlphttp
+  - type: GettingStarted
+    url: https://opentelemetry.io/docs/collector/
+  - type: Client Libraries
+    url: https://opentelemetry.io/docs/languages/
+- aid: opentelemetry:opentelemetry-metrics-api
+  name: OpenTelemetry Metrics API
+  description: The Metrics API from OpenTelemetry — 1 operation(s) for metrics.
+  humanURL: https://opentelemetry.io/docs/specs/otlp/
+  tags:
+  - Metrics
+  properties:
+  - type: OpenAPI
+    url: openapi/opentelemetry-metrics-api-openapi.yml
+  - type: Documentation
+    url: https://opentelemetry.io/docs/specs/otlp/
+  - type: AsyncAPI
+    url: asyncapi/opentelemetry-otlp-asyncapi.yml
+  - type: JSONSchema
+    url: json-schema.json
+  - type: JSONLD
+    url: context.jsonld
+  - type: Reference
+    url: https://opentelemetry.io/docs/specs/otlp/#otlphttp
+  - type: GettingStarted
+    url: https://opentelemetry.io/docs/collector/
+  - type: Client Libraries
+    url: https://opentelemetry.io/docs/languages/
+- aid: opentelemetry:opentelemetry-traces-api
+  name: OpenTelemetry Traces API
+  description: The Traces API from OpenTelemetry — 1 operation(s) for traces.
+  humanURL: https://opentelemetry.io/docs/specs/otlp/
+  tags:
+  - Traces
+  properties:
+  - type: OpenAPI
+    url: openapi/opentelemetry-traces-api-openapi.yml
+  - type: Documentation
+    url: https://opentelemetry.io/docs/specs/otlp/
+  - type: AsyncAPI
+    url: asyncapi/opentelemetry-otlp-asyncapi.yml
+  - type: JSONSchema
+    url: json-schema.json
+  - type: JSONLD
+    url: context.jsonld
+  - type: Reference
+    url: https://opentelemetry.io/docs/specs/otlp/#otlphttp
+  - type: GettingStarted
+    url: https://opentelemetry.io/docs/collector/
+  - type: Client Libraries
+    url: https://opentelemetry.io/docs/languages/
 common:
   - type: DomainSecurity
     url: security/opentelemetry-domain-security.yml
