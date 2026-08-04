@@ -1,0 +1,20 @@
+{
+  "provider": "opentelemetry",
+  "sources": [
+    "openapi.yml"
+  ],
+  "outputs": [
+    "opentelemetry-logs-api-openapi.yml",
+    "opentelemetry-metrics-api-openapi.yml",
+    "opentelemetry-traces-api-openapi.yml"
+  ],
+  "archived": [
+    "archived openapi.yml"
+  ],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "discovered stray spec: openapi.yml"
+  ],
+  "skipped": []
+}
