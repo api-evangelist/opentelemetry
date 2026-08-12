@@ -168,6 +168,9 @@ apis:
   - type: Client Libraries
     url: https://opentelemetry.io/docs/languages/
 common:
+  - type: License
+    name: Apache-2.0
+    url: https://github.com/open-telemetry/opentelemetry-proto/blob/main/LICENSE
   - type: DomainSecurity
     url: security/opentelemetry-domain-security.yml
   - type: LinkedIn
