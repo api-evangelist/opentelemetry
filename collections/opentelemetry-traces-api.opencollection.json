@@ -1,0 +1,33 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "OpenTelemetry Protocol (OTLP) HTTP Traces API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Traces",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "OpenTelemetry Export trace data",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "http://localhost:4318/v1/traces",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Accepts a batch of spans encoded in OTLP format. Each span represents a unit of work or operation within a distributed trace, containing timing data, attributes, events, and links."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
