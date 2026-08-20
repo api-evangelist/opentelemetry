@@ -21,6 +21,14 @@ position: Consumer
 access: 3rd-Party
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/opentelemetry.png
 tags:
+  - Cloud-Native
+  - Logging
+  - Metrics
+  - Monitoring
+  - Observability
+  - Open-Source
+  - Tracing
+tags_raw:
   - Cloud Native
   - Logging
   - Metrics
