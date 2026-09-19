@@ -85,6 +85,11 @@ apis:
     extension and config file hot-reloading.
   humanURL: https://opentelemetry.io/docs/collector/
   tags:
+  - Collectors
+  - Configuration
+  - Observability
+  - Pipelines
+  tags_raw:
   - Collector
   - Configuration
   - Observability
