@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
   title: OpenTelemetry Protocol (OTLP) HTTP Logs API
   description: The OpenTelemetry Protocol (OTLP) HTTP API provides endpoints for receiving telemetry data including traces, metrics, and logs. OTLP is the native protocol for OpenTelemetry and defines how telemetry data is encoded, transported, and delivered between telemetry sources, collectors, and backends.
@@ -64,6 +64,44 @@ paths:
                 $ref: '#/components/schemas/Status'
 components:
   schemas:
+    ExportLogsServiceRequest:
+      type: object
+      description: Request message for the logs export service
+      properties:
+        resourceLogs:
+          type: array
+          description: Batch of resource logs
+          items:
+            $ref: '#/components/schemas/ResourceLogs'
+    ExportLogsPartialSuccess:
+      type: object
+      description: Indicates partial success when some log records were rejected
+      properties:
+        rejectedLogRecords:
+          type: integer
+          format: int64
+          description: Number of log records rejected
+        errorMessage:
+          type: string
+          description: Human-readable error message
+    KeyValue:
+      type: object
+      description: A key-value pair for attributes
+      required:
+      - key
+      - value
+      properties:
+        key:
+          type: string
+          description: Attribute key
+        value:
+          $ref: '#/components/schemas/AnyValue'
+    ExportLogsServiceResponse:
+      type: object
+      description: Response message for the logs export service
+      properties:
+        partialSuccess:
+          $ref: '#/components/schemas/ExportLogsPartialSuccess'
     InstrumentationScope:
       type: object
       description: Metadata about the instrumentation library or component that produced the telemetry data.
@@ -82,6 +120,51 @@ components:
         droppedAttributesCount:
           type: integer
           format: int32
+    ResourceLogs:
+      type: object
+      description: Collection of logs from a resource
+      properties:
+        resource:
+          $ref: '#/components/schemas/Resource'
+        scopeLogs:
+          type: array
+          description: Logs grouped by instrumentation scope
+          items:
+            $ref: '#/components/schemas/ScopeLogs'
+        schemaUrl:
+          type: string
+          description: Schema URL for the resource
+    AnyValue:
+      type: object
+      description: A polymorphic value container that can hold string, bool, int, double, array, or key-value list values.
+      properties:
+        stringValue:
+          type: string
+        boolValue:
+          type: boolean
+        intValue:
+          type: string
+          format: int64
+        doubleValue:
+          type: number
+          format: double
+        arrayValue:
+          type: object
+          properties:
+            values:
+              type: array
+              items:
+                $ref: '#/components/schemas/AnyValue'
+        kvlistValue:
+          type: object
+          properties:
+            values:
+              type: array
+              items:
+                $ref: '#/components/schemas/KeyValue'
+        bytesValue:
+          type: string
+          format: byte
     Resource:
       type: object
       description: Describes the entity producing telemetry. A resource has attributes such as service.name, service.version, host.name, and other identifying metadata.
@@ -94,6 +177,16 @@ components:
         droppedAttributesCount:
           type: integer
           format: int32
+    Status:
+      type: object
+      description: Error status response
+      properties:
+        code:
+          type: integer
+          description: HTTP status code
+        message:
+          type: string
+          description: Human-readable error message
     ScopeLogs:
       type: object
       description: Logs associated with an instrumentation scope
@@ -108,17 +201,6 @@ components:
         schemaUrl:
           type: string
           description: Schema URL for the instrumentation scope
-    ExportLogsPartialSuccess:
-      type: object
-      description: Indicates partial success when some log records were rejected
-      properties:
-        rejectedLogRecords:
-          type: integer
-          format: int64
-          description: Number of log records rejected
-        errorMessage:
-          type: string
-          description: Human-readable error message
     LogRecord:
       type: object
       description: A single log record representing a timestamped event with severity, body content, and associated metadata.
@@ -159,88 +241,6 @@ components:
         spanId:
           type: string
           description: Span ID for correlating logs with spans
-    ExportLogsServiceResponse:
-      type: object
-      description: Response message for the logs export service
-      properties:
-        partialSuccess:
-          $ref: '#/components/schemas/ExportLogsPartialSuccess'
-    AnyValue:
-      type: object
-      description: A polymorphic value container that can hold string, bool, int, double, array, or key-value list values.
-      properties:
-        stringValue:
-          type: string
-        boolValue:
-          type: boolean
-        intValue:
-          type: string
-          format: int64
-        doubleValue:
-          type: number
-          format: double
-        arrayValue:
-          type: object
-          properties:
-            values:
-              type: array
-              items:
-                $ref: '#/components/schemas/AnyValue'
-        kvlistValue:
-          type: object
-          properties:
-            values:
-              type: array
-              items:
-                $ref: '#/components/schemas/KeyValue'
-        bytesValue:
-          type: string
-          format: byte
-    Status:
-      type: object
-      description: Error status response
-      properties:
-        code:
-          type: integer
-          description: HTTP status code
-        message:
-          type: string
-          description: Human-readable error message
-    ResourceLogs:
-      type: object
-      description: Collection of logs from a resource
-      properties:
-        resource:
-          $ref: '#/components/schemas/Resource'
-        scopeLogs:
-          type: array
-          description: Logs grouped by instrumentation scope
-          items:
-            $ref: '#/components/schemas/ScopeLogs'
-        schemaUrl:
-          type: string
-          description: Schema URL for the resource
-    KeyValue:
-      type: object
-      description: A key-value pair for attributes
-      required:
-      - key
-      - value
-      properties:
-        key:
-          type: string
-          description: Attribute key
-        value:
-          $ref: '#/components/schemas/AnyValue'
-    ExportLogsServiceRequest:
-      type: object
-      description: Request message for the logs export service
-      properties:
-        resourceLogs:
-          type: array
-          description: Batch of resource logs
-          items:
-            $ref: '#/components/schemas/ResourceLogs'
   securitySchemes:
     bearerAuth:
       type: http

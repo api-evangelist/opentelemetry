@@ -1,20 +1,24 @@
 {
   "provider": "opentelemetry",
   "sources": [
-    "openapi.yml"
+    "_original/openapi.yml"
   ],
   "outputs": [
     "opentelemetry-logs-api-openapi.yml",
     "opentelemetry-metrics-api-openapi.yml",
     "opentelemetry-traces-api-openapi.yml"
   ],
-  "archived": [
-    "archived openapi.yml"
-  ],
+  "archived": [],
   "errors": [],
   "warnings": [],
   "notes": [
-    "discovered stray spec: openapi.yml"
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
   ],
-  "skipped": []
+  "skipped": [
+    "opentelemetry-logs-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "opentelemetry-metrics-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "opentelemetry-traces-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }
