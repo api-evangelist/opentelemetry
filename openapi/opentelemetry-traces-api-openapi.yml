@@ -64,180 +64,6 @@ paths:
                 $ref: '#/components/schemas/Status'
 components:
   schemas:
-    ExportTraceServiceRequest:
-      type: object
-      description: Request message for the trace export service
-      properties:
-        resourceSpans:
-          type: array
-          description: Batch of resource spans
-          items:
-            $ref: '#/components/schemas/ResourceSpans'
-    InstrumentationScope:
-      type: object
-      description: Metadata about the instrumentation library or component that produced the telemetry data.
-      properties:
-        name:
-          type: string
-          description: Instrumentation scope name
-        version:
-          type: string
-          description: Instrumentation scope version
-        attributes:
-          type: array
-          description: Scope attributes
-          items:
-            $ref: '#/components/schemas/KeyValue'
-        droppedAttributesCount:
-          type: integer
-          format: int32
-    ScopeSpans:
-      type: object
-      description: Spans associated with an instrumentation scope
-      properties:
-        scope:
-          $ref: '#/components/schemas/InstrumentationScope'
-        spans:
-          type: array
-          description: List of spans
-          items:
-            $ref: '#/components/schemas/Span'
-        schemaUrl:
-          type: string
-          description: Schema URL for the instrumentation scope
-    SpanEvent:
-      type: object
-      description: A timed event within a span
-      properties:
-        timeUnixNano:
-          type: string
-          format: uint64
-          description: Event timestamp in nanoseconds since Unix epoch
-        name:
-          type: string
-          description: Event name
-        attributes:
-          type: array
-          description: Event attributes
-          items:
-            $ref: '#/components/schemas/KeyValue'
-        droppedAttributesCount:
-          type: integer
-          format: int32
-    AnyValue:
-      type: object
-      description: A polymorphic value container that can hold string, bool, int, double, array, or key-value list values.
-      properties:
-        stringValue:
-          type: string
-        boolValue:
-          type: boolean
-        intValue:
-          type: string
-          format: int64
-        doubleValue:
-          type: number
-          format: double
-        arrayValue:
-          type: object
-          properties:
-            values:
-              type: array
-              items:
-                $ref: '#/components/schemas/AnyValue'
-        kvlistValue:
-          type: object
-          properties:
-            values:
-              type: array
-              items:
-                $ref: '#/components/schemas/KeyValue'
-        bytesValue:
-          type: string
-          format: byte
-    ExportTracePartialSuccess:
-      type: object
-      description: Indicates partial success when some spans were rejected
-      properties:
-        rejectedSpans:
-          type: integer
-          format: int64
-          description: Number of spans rejected
-        errorMessage:
-          type: string
-          description: Human-readable error message
-    Status:
-      type: object
-      description: Error status response
-      properties:
-        code:
-          type: integer
-          description: HTTP status code
-        message:
-          type: string
-          description: Human-readable error message
-    SpanLink:
-      type: object
-      description: A reference from one span to another
-      properties:
-        traceId:
-          type: string
-          description: Trace ID of the linked span
-        spanId:
-          type: string
-          description: Span ID of the linked span
-        traceState:
-          type: string
-          description: W3C trace state of the linked span
-        attributes:
-          type: array
-          description: Link attributes
-          items:
-            $ref: '#/components/schemas/KeyValue'
-        droppedAttributesCount:
-          type: integer
-          format: int32
-        flags:
-          type: integer
-          format: int32
-    ResourceSpans:
-      type: object
-      description: Collection of spans from a resource
-      properties:
-        resource:
-          $ref: '#/components/schemas/Resource'
-        scopeSpans:
-          type: array
-          description: Spans grouped by instrumentation scope
-          items:
-            $ref: '#/components/schemas/ScopeSpans'
-        schemaUrl:
-          type: string
-          description: Schema URL for the resource
-    KeyValue:
-      type: object
-      description: A key-value pair for attributes
-      required:
-      - key
-      - value
-      properties:
-        key:
-          type: string
-          description: Attribute key
-        value:
-          $ref: '#/components/schemas/AnyValue'
-    Resource:
-      type: object
-      description: Describes the entity producing telemetry. A resource has attributes such as service.name, service.version, host.name, and other identifying metadata.
-      properties:
-        attributes:
-          type: array
-          description: Resource attributes
-          items:
-            $ref: '#/components/schemas/KeyValue'
-        droppedAttributesCount:
-          type: integer
-          format: int32
     Span:
       type: object
       description: A span represents a single operation within a trace. Spans can be nested to form a trace tree. Each span has a name, timing data, structured log messages (events), and links to other spans.
@@ -318,6 +144,59 @@ components:
           description: Number of links dropped due to limits
         status:
           $ref: '#/components/schemas/SpanStatus'
+    Status:
+      type: object
+      description: Error status response
+      properties:
+        code:
+          type: integer
+          description: HTTP status code
+        message:
+          type: string
+          description: Human-readable error message
+    ExportTracePartialSuccess:
+      type: object
+      description: Indicates partial success when some spans were rejected
+      properties:
+        rejectedSpans:
+          type: integer
+          format: int64
+          description: Number of spans rejected
+        errorMessage:
+          type: string
+          description: Human-readable error message
+    ResourceSpans:
+      type: object
+      description: Collection of spans from a resource
+      properties:
+        resource:
+          $ref: '#/components/schemas/Resource'
+        scopeSpans:
+          type: array
+          description: Spans grouped by instrumentation scope
+          items:
+            $ref: '#/components/schemas/ScopeSpans'
+        schemaUrl:
+          type: string
+          description: Schema URL for the resource
+    InstrumentationScope:
+      type: object
+      description: Metadata about the instrumentation library or component that produced the telemetry data.
+      properties:
+        name:
+          type: string
+          description: Instrumentation scope name
+        version:
+          type: string
+          description: Instrumentation scope version
+        attributes:
+          type: array
+          description: Scope attributes
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        droppedAttributesCount:
+          type: integer
+          format: int32
     SpanStatus:
       type: object
       description: Status of the span
@@ -338,6 +217,127 @@ components:
       properties:
         partialSuccess:
           $ref: '#/components/schemas/ExportTracePartialSuccess'
+    AnyValue:
+      type: object
+      description: A polymorphic value container that can hold string, bool, int, double, array, or key-value list values.
+      properties:
+        stringValue:
+          type: string
+        boolValue:
+          type: boolean
+        intValue:
+          type: string
+          format: int64
+        doubleValue:
+          type: number
+          format: double
+        arrayValue:
+          type: object
+          properties:
+            values:
+              type: array
+              items:
+                $ref: '#/components/schemas/AnyValue'
+        kvlistValue:
+          type: object
+          properties:
+            values:
+              type: array
+              items:
+                $ref: '#/components/schemas/KeyValue'
+        bytesValue:
+          type: string
+          format: byte
+    KeyValue:
+      type: object
+      description: A key-value pair for attributes
+      required:
+      - key
+      - value
+      properties:
+        key:
+          type: string
+          description: Attribute key
+        value:
+          $ref: '#/components/schemas/AnyValue'
+    ScopeSpans:
+      type: object
+      description: Spans associated with an instrumentation scope
+      properties:
+        scope:
+          $ref: '#/components/schemas/InstrumentationScope'
+        spans:
+          type: array
+          description: List of spans
+          items:
+            $ref: '#/components/schemas/Span'
+        schemaUrl:
+          type: string
+          description: Schema URL for the instrumentation scope
+    Resource:
+      type: object
+      description: Describes the entity producing telemetry. A resource has attributes such as service.name, service.version, host.name, and other identifying metadata.
+      properties:
+        attributes:
+          type: array
+          description: Resource attributes
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        droppedAttributesCount:
+          type: integer
+          format: int32
+    ExportTraceServiceRequest:
+      type: object
+      description: Request message for the trace export service
+      properties:
+        resourceSpans:
+          type: array
+          description: Batch of resource spans
+          items:
+            $ref: '#/components/schemas/ResourceSpans'
+    SpanEvent:
+      type: object
+      description: A timed event within a span
+      properties:
+        timeUnixNano:
+          type: string
+          format: uint64
+          description: Event timestamp in nanoseconds since Unix epoch
+        name:
+          type: string
+          description: Event name
+        attributes:
+          type: array
+          description: Event attributes
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        droppedAttributesCount:
+          type: integer
+          format: int32
+    SpanLink:
+      type: object
+      description: A reference from one span to another
+      properties:
+        traceId:
+          type: string
+          description: Trace ID of the linked span
+        spanId:
+          type: string
+          description: Span ID of the linked span
+        traceState:
+          type: string
+          description: W3C trace state of the linked span
+        attributes:
+          type: array
+          description: Link attributes
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        droppedAttributesCount:
+          type: integer
+          format: int32
+        flags:
+          type: integer
+          format: int32
   securitySchemes:
     bearerAuth:
       type: http
