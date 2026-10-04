@@ -195,6 +195,9 @@ apis:
   - type: Client Libraries
     url: https://opentelemetry.io/docs/languages/
 common:
+  - type: CapabilityMap
+    url: capabilities/opentelemetry-capability-edges.yml
+    name: OpenTelemetry Business Capability Map
   - type: IssueTracker
     url: https://github.com/open-telemetry/opentelemetry-proto/issues
   - type: Releases
