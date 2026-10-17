@@ -64,67 +64,6 @@ paths:
                 $ref: '#/components/schemas/Status'
 components:
   schemas:
-    ResourceLogs:
-      type: object
-      description: Collection of logs from a resource
-      properties:
-        resource:
-          $ref: '#/components/schemas/Resource'
-        scopeLogs:
-          type: array
-          description: Logs grouped by instrumentation scope
-          items:
-            $ref: '#/components/schemas/ScopeLogs'
-        schemaUrl:
-          type: string
-          description: Schema URL for the resource
-    Status:
-      type: object
-      description: Error status response
-      properties:
-        code:
-          type: integer
-          description: HTTP status code
-        message:
-          type: string
-          description: Human-readable error message
-    KeyValue:
-      type: object
-      description: A key-value pair for attributes
-      required:
-      - key
-      - value
-      properties:
-        key:
-          type: string
-          description: Attribute key
-        value:
-          $ref: '#/components/schemas/AnyValue'
-    ScopeLogs:
-      type: object
-      description: Logs associated with an instrumentation scope
-      properties:
-        scope:
-          $ref: '#/components/schemas/InstrumentationScope'
-        logRecords:
-          type: array
-          description: List of log records
-          items:
-            $ref: '#/components/schemas/LogRecord'
-        schemaUrl:
-          type: string
-          description: Schema URL for the instrumentation scope
-    ExportLogsPartialSuccess:
-      type: object
-      description: Indicates partial success when some log records were rejected
-      properties:
-        rejectedLogRecords:
-          type: integer
-          format: int64
-          description: Number of log records rejected
-        errorMessage:
-          type: string
-          description: Human-readable error message
     AnyValue:
       type: object
       description: A polymorphic value container that can hold string, bool, int, double, array, or key-value list values.
@@ -165,19 +104,13 @@ components:
           description: Batch of resource logs
           items:
             $ref: '#/components/schemas/ResourceLogs'
-    InstrumentationScope:
+    Resource:
       type: object
-      description: Metadata about the instrumentation library or component that produced the telemetry data.
+      description: Describes the entity producing telemetry. A resource has attributes such as service.name, service.version, host.name, and other identifying metadata.
       properties:
-        name:
-          type: string
-          description: Instrumentation scope name
-        version:
-          type: string
-          description: Instrumentation scope version
         attributes:
           type: array
-          description: Scope attributes
+          description: Resource attributes
           items:
             $ref: '#/components/schemas/KeyValue'
         droppedAttributesCount:
@@ -223,24 +156,91 @@ components:
         spanId:
           type: string
           description: Span ID for correlating logs with spans
-    Resource:
+    KeyValue:
       type: object
-      description: Describes the entity producing telemetry. A resource has attributes such as service.name, service.version, host.name, and other identifying metadata.
+      description: A key-value pair for attributes
+      required:
+      - key
+      - value
       properties:
-        attributes:
-          type: array
-          description: Resource attributes
-          items:
-            $ref: '#/components/schemas/KeyValue'
-        droppedAttributesCount:
+        key:
+          type: string
+          description: Attribute key
+        value:
+          $ref: '#/components/schemas/AnyValue'
+    Status:
+      type: object
+      description: Error status response
+      properties:
+        code:
           type: integer
-          format: int32
+          description: HTTP status code
+        message:
+          type: string
+          description: Human-readable error message
     ExportLogsServiceResponse:
       type: object
       description: Response message for the logs export service
       properties:
         partialSuccess:
           $ref: '#/components/schemas/ExportLogsPartialSuccess'
+    ExportLogsPartialSuccess:
+      type: object
+      description: Indicates partial success when some log records were rejected
+      properties:
+        rejectedLogRecords:
+          type: integer
+          format: int64
+          description: Number of log records rejected
+        errorMessage:
+          type: string
+          description: Human-readable error message
+    ResourceLogs:
+      type: object
+      description: Collection of logs from a resource
+      properties:
+        resource:
+          $ref: '#/components/schemas/Resource'
+        scopeLogs:
+          type: array
+          description: Logs grouped by instrumentation scope
+          items:
+            $ref: '#/components/schemas/ScopeLogs'
+        schemaUrl:
+          type: string
+          description: Schema URL for the resource
+    ScopeLogs:
+      type: object
+      description: Logs associated with an instrumentation scope
+      properties:
+        scope:
+          $ref: '#/components/schemas/InstrumentationScope'
+        logRecords:
+          type: array
+          description: List of log records
+          items:
+            $ref: '#/components/schemas/LogRecord'
+        schemaUrl:
+          type: string
+          description: Schema URL for the instrumentation scope
+    InstrumentationScope:
+      type: object
+      description: Metadata about the instrumentation library or component that produced the telemetry data.
+      properties:
+        name:
+          type: string
+          description: Instrumentation scope name
+        version:
+          type: string
+          description: Instrumentation scope version
+        attributes:
+          type: array
+          description: Scope attributes
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        droppedAttributesCount:
+          type: integer
+          format: int32
   securitySchemes:
     bearerAuth:
       type: http

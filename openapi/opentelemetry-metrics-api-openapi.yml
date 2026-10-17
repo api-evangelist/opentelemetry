@@ -64,24 +64,6 @@ paths:
                 $ref: '#/components/schemas/Status'
 components:
   schemas:
-    ExportMetricsServiceResponse:
-      type: object
-      description: Response message for the metrics export service
-      properties:
-        partialSuccess:
-          $ref: '#/components/schemas/ExportMetricsPartialSuccess'
-    ExponentialHistogramBuckets:
-      type: object
-      description: Bucket counts for exponential histograms
-      properties:
-        offset:
-          type: integer
-          format: int32
-        bucketCounts:
-          type: array
-          items:
-            type: string
-            format: uint64
     KeyValue:
       type: object
       description: A key-value pair for attributes
@@ -94,46 +76,6 @@ components:
           description: Attribute key
         value:
           $ref: '#/components/schemas/AnyValue'
-    AnyValue:
-      type: object
-      description: A polymorphic value container that can hold string, bool, int, double, array, or key-value list values.
-      properties:
-        stringValue:
-          type: string
-        boolValue:
-          type: boolean
-        intValue:
-          type: string
-          format: int64
-        doubleValue:
-          type: number
-          format: double
-        arrayValue:
-          type: object
-          properties:
-            values:
-              type: array
-              items:
-                $ref: '#/components/schemas/AnyValue'
-        kvlistValue:
-          type: object
-          properties:
-            values:
-              type: array
-              items:
-                $ref: '#/components/schemas/KeyValue'
-        bytesValue:
-          type: string
-          format: byte
-    ExportMetricsServiceRequest:
-      type: object
-      description: Request message for the metrics export service
-      properties:
-        resourceMetrics:
-          type: array
-          description: Batch of resource metrics
-          items:
-            $ref: '#/components/schemas/ResourceMetrics'
     Status:
       type: object
       description: Error status response
@@ -144,136 +86,49 @@ components:
         message:
           type: string
           description: Human-readable error message
-    HistogramDataPoint:
+    Metric:
       type: object
-      description: A single histogram data point
+      description: Represents a single metric with its data points. A metric contains one of gauge, sum, histogram, exponential histogram, or summary data.
+      required:
+      - name
       properties:
-        attributes:
-          type: array
-          items:
-            $ref: '#/components/schemas/KeyValue'
-        startTimeUnixNano:
+        name:
           type: string
-          format: uint64
-        timeUnixNano:
+          description: Metric name
+        description:
           type: string
-          format: uint64
-        count:
+          description: Metric description
+        unit:
           type: string
-          format: uint64
+          description: Metric unit (e.g., ms, bytes, 1)
+        gauge:
+          $ref: '#/components/schemas/Gauge'
         sum:
-          type: number
-          format: double
-        bucketCounts:
-          type: array
-          items:
-            type: string
-            format: uint64
-        explicitBounds:
-          type: array
-          items:
-            type: number
-            format: double
-        exemplars:
-          type: array
-          items:
-            $ref: '#/components/schemas/Exemplar'
-        flags:
-          type: integer
-          format: int32
-        min:
-          type: number
-          format: double
-        max:
-          type: number
-          format: double
-    Summary:
+          $ref: '#/components/schemas/Sum'
+        histogram:
+          $ref: '#/components/schemas/Histogram'
+        exponentialHistogram:
+          $ref: '#/components/schemas/ExponentialHistogram'
+        summary:
+          $ref: '#/components/schemas/Summary'
+    InstrumentationScope:
       type: object
-      description: Summary metric with precomputed quantiles
+      description: Metadata about the instrumentation library or component that produced the telemetry data.
       properties:
-        dataPoints:
-          type: array
-          items:
-            $ref: '#/components/schemas/SummaryDataPoint'
-    Histogram:
-      type: object
-      description: Histogram metric with explicit bucket boundaries
-      properties:
-        dataPoints:
-          type: array
-          items:
-            $ref: '#/components/schemas/HistogramDataPoint'
-        aggregationTemporality:
-          type: integer
-          enum:
-          - 0
-          - 1
-          - 2
-    ExponentialHistogram:
-      type: object
-      description: Histogram metric with exponential bucket boundaries
-      properties:
-        dataPoints:
-          type: array
-          items:
-            $ref: '#/components/schemas/ExponentialHistogramDataPoint'
-        aggregationTemporality:
-          type: integer
-          enum:
-          - 0
-          - 1
-          - 2
-    Sum:
-      type: object
-      description: Sum metric representing cumulative or delta values
-      properties:
-        dataPoints:
-          type: array
-          items:
-            $ref: '#/components/schemas/NumberDataPoint'
-        aggregationTemporality:
-          type: integer
-          description: 0=unspecified, 1=delta, 2=cumulative
-          enum:
-          - 0
-          - 1
-          - 2
-        isMonotonic:
-          type: boolean
-          description: Whether the sum is monotonically increasing
-    Resource:
-      type: object
-      description: Describes the entity producing telemetry. A resource has attributes such as service.name, service.version, host.name, and other identifying metadata.
-      properties:
+        name:
+          type: string
+          description: Instrumentation scope name
+        version:
+          type: string
+          description: Instrumentation scope version
         attributes:
           type: array
-          description: Resource attributes
+          description: Scope attributes
           items:
             $ref: '#/components/schemas/KeyValue'
         droppedAttributesCount:
           type: integer
           format: int32
-    Exemplar:
-      type: object
-      description: Sample input measurement with trace context
-      properties:
-        filteredAttributes:
-          type: array
-          items:
-            $ref: '#/components/schemas/KeyValue'
-        timeUnixNano:
-          type: string
-          format: uint64
-        asDouble:
-          type: number
-          format: double
-        asInt:
-          type: string
-          format: int64
-        spanId:
-          type: string
-        traceId:
-          type: string
     ExponentialHistogramDataPoint:
       type: object
       description: A single exponential histogram data point
@@ -320,95 +175,37 @@ components:
         zeroThreshold:
           type: number
           format: double
-    ExportMetricsPartialSuccess:
+    AnyValue:
       type: object
-      description: Indicates partial success when some data points were rejected
+      description: A polymorphic value container that can hold string, bool, int, double, array, or key-value list values.
       properties:
-        rejectedDataPoints:
-          type: integer
+        stringValue:
+          type: string
+        boolValue:
+          type: boolean
+        intValue:
+          type: string
           format: int64
-          description: Number of data points rejected
-        errorMessage:
-          type: string
-          description: Human-readable error message
-    Gauge:
-      type: object
-      description: Gauge metric representing instantaneous values
-      properties:
-        dataPoints:
-          type: array
-          items:
-            $ref: '#/components/schemas/NumberDataPoint'
-    NumberDataPoint:
-      type: object
-      description: A single numeric data point
-      properties:
-        attributes:
-          type: array
-          items:
-            $ref: '#/components/schemas/KeyValue'
-        startTimeUnixNano:
-          type: string
-          format: uint64
-        timeUnixNano:
-          type: string
-          format: uint64
-        asDouble:
+        doubleValue:
           type: number
           format: double
-        asInt:
+        arrayValue:
+          type: object
+          properties:
+            values:
+              type: array
+              items:
+                $ref: '#/components/schemas/AnyValue'
+        kvlistValue:
+          type: object
+          properties:
+            values:
+              type: array
+              items:
+                $ref: '#/components/schemas/KeyValue'
+        bytesValue:
           type: string
-          format: int64
-        exemplars:
-          type: array
-          items:
-            $ref: '#/components/schemas/Exemplar'
-        flags:
-          type: integer
-          format: int32
-    Metric:
-      type: object
-      description: Represents a single metric with its data points. A metric contains one of gauge, sum, histogram, exponential histogram, or summary data.
-      required:
-      - name
-      properties:
-        name:
-          type: string
-          description: Metric name
-        description:
-          type: string
-          description: Metric description
-        unit:
-          type: string
-          description: Metric unit (e.g., ms, bytes, 1)
-        gauge:
-          $ref: '#/components/schemas/Gauge'
-        sum:
-          $ref: '#/components/schemas/Sum'
-        histogram:
-          $ref: '#/components/schemas/Histogram'
-        exponentialHistogram:
-          $ref: '#/components/schemas/ExponentialHistogram'
-        summary:
-          $ref: '#/components/schemas/Summary'
-    InstrumentationScope:
-      type: object
-      description: Metadata about the instrumentation library or component that produced the telemetry data.
-      properties:
-        name:
-          type: string
-          description: Instrumentation scope name
-        version:
-          type: string
-          description: Instrumentation scope version
-        attributes:
-          type: array
-          description: Scope attributes
-          items:
-            $ref: '#/components/schemas/KeyValue'
-        droppedAttributesCount:
-          type: integer
-          format: int32
+          format: byte
     SummaryDataPoint:
       type: object
       description: A single summary data point
@@ -457,6 +254,151 @@ components:
         schemaUrl:
           type: string
           description: Schema URL for the instrumentation scope
+    Exemplar:
+      type: object
+      description: Sample input measurement with trace context
+      properties:
+        filteredAttributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        timeUnixNano:
+          type: string
+          format: uint64
+        asDouble:
+          type: number
+          format: double
+        asInt:
+          type: string
+          format: int64
+        spanId:
+          type: string
+        traceId:
+          type: string
+    HistogramDataPoint:
+      type: object
+      description: A single histogram data point
+      properties:
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        startTimeUnixNano:
+          type: string
+          format: uint64
+        timeUnixNano:
+          type: string
+          format: uint64
+        count:
+          type: string
+          format: uint64
+        sum:
+          type: number
+          format: double
+        bucketCounts:
+          type: array
+          items:
+            type: string
+            format: uint64
+        explicitBounds:
+          type: array
+          items:
+            type: number
+            format: double
+        exemplars:
+          type: array
+          items:
+            $ref: '#/components/schemas/Exemplar'
+        flags:
+          type: integer
+          format: int32
+        min:
+          type: number
+          format: double
+        max:
+          type: number
+          format: double
+    NumberDataPoint:
+      type: object
+      description: A single numeric data point
+      properties:
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        startTimeUnixNano:
+          type: string
+          format: uint64
+        timeUnixNano:
+          type: string
+          format: uint64
+        asDouble:
+          type: number
+          format: double
+        asInt:
+          type: string
+          format: int64
+        exemplars:
+          type: array
+          items:
+            $ref: '#/components/schemas/Exemplar'
+        flags:
+          type: integer
+          format: int32
+    ExponentialHistogram:
+      type: object
+      description: Histogram metric with exponential bucket boundaries
+      properties:
+        dataPoints:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExponentialHistogramDataPoint'
+        aggregationTemporality:
+          type: integer
+          enum:
+          - 0
+          - 1
+          - 2
+    ExportMetricsServiceResponse:
+      type: object
+      description: Response message for the metrics export service
+      properties:
+        partialSuccess:
+          $ref: '#/components/schemas/ExportMetricsPartialSuccess'
+    ExportMetricsServiceRequest:
+      type: object
+      description: Request message for the metrics export service
+      properties:
+        resourceMetrics:
+          type: array
+          description: Batch of resource metrics
+          items:
+            $ref: '#/components/schemas/ResourceMetrics'
+    Histogram:
+      type: object
+      description: Histogram metric with explicit bucket boundaries
+      properties:
+        dataPoints:
+          type: array
+          items:
+            $ref: '#/components/schemas/HistogramDataPoint'
+        aggregationTemporality:
+          type: integer
+          enum:
+          - 0
+          - 1
+          - 2
+    ExportMetricsPartialSuccess:
+      type: object
+      description: Indicates partial success when some data points were rejected
+      properties:
+        rejectedDataPoints:
+          type: integer
+          format: int64
+          description: Number of data points rejected
+        errorMessage:
+          type: string
+          description: Human-readable error message
     ResourceMetrics:
       type: object
       description: Collection of metrics from a resource
@@ -471,6 +413,64 @@ components:
         schemaUrl:
           type: string
           description: Schema URL for the resource
+    Resource:
+      type: object
+      description: Describes the entity producing telemetry. A resource has attributes such as service.name, service.version, host.name, and other identifying metadata.
+      properties:
+        attributes:
+          type: array
+          description: Resource attributes
+          items:
+            $ref: '#/components/schemas/KeyValue'
+        droppedAttributesCount:
+          type: integer
+          format: int32
+    ExponentialHistogramBuckets:
+      type: object
+      description: Bucket counts for exponential histograms
+      properties:
+        offset:
+          type: integer
+          format: int32
+        bucketCounts:
+          type: array
+          items:
+            type: string
+            format: uint64
+    Summary:
+      type: object
+      description: Summary metric with precomputed quantiles
+      properties:
+        dataPoints:
+          type: array
+          items:
+            $ref: '#/components/schemas/SummaryDataPoint'
+    Gauge:
+      type: object
+      description: Gauge metric representing instantaneous values
+      properties:
+        dataPoints:
+          type: array
+          items:
+            $ref: '#/components/schemas/NumberDataPoint'
+    Sum:
+      type: object
+      description: Sum metric representing cumulative or delta values
+      properties:
+        dataPoints:
+          type: array
+          items:
+            $ref: '#/components/schemas/NumberDataPoint'
+        aggregationTemporality:
+          type: integer
+          description: 0=unspecified, 1=delta, 2=cumulative
+          enum:
+          - 0
+          - 1
+          - 2
+        isMonotonic:
+          type: boolean
+          description: Whether the sum is monotonically increasing
   securitySchemes:
     bearerAuth:
       type: http
