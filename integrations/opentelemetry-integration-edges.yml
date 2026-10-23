@@ -6,21 +6,25 @@ source:
 - https://composio.dev/toolkits/opentelemetry
 - https://monid.ai/tools/opentelemetry
 checked:
-- https://composio.dev/toolkits/opentelemetry
-- https://focus.finops.org/data-generators/
-- https://github.com/cncf/k8s-conformance
-- https://github.com/cncf/landscape
-- https://monid.ai/tools/opentelemetry
-- https://n8n.io/integrations/opentelemetry/
-- https://zapier.com/apps/opentelemetry/integrations
+- artifact-hub/integrations/artifact-hub-integration-edges.yml
 - https://api.github.com
 - https://claude-plugins.dev/sitemap.xml
+- https://composio.dev/toolkits/opentelemetry
+- https://focus.finops.org/data-generators/
 - https://github.com/VoltAgent/awesome-agent-skills
+- https://github.com/cncf/k8s-conformance
+- https://github.com/cncf/landscape
+- https://landscape.cd.foundation/data/full.json
+- https://monid.ai/tools/opentelemetry
+- https://n8n.io/integrations/opentelemetry/
 - https://officialskills.sh/sitemap.xml
+- https://plugins.jenkins.io/api/plugin/
+- https://plugins.jenkins.io/api/plugins
 - https://skillsmp.com/sitemap.xml
-- https://www.skills.sh/sitemap.xml
 - https://www.bestpractices.dev/en/projects.json
-- artifact-hub/integrations/artifact-hub-integration-edges.yml
+- https://www.bestpractices.dev/en/projects.json?page=N
+- https://www.skills.sh/sitemap.xml
+- https://zapier.com/apps/opentelemetry/integrations
 summary: null
 marketplace_apps: []
 edges:
@@ -89,86 +93,6 @@ edges:
     detected: '2026-10-20'
   detected_by: sweep-agent-skills.py
   first_seen: '2026-10-20'
-- partner_name: OpenSSF Best Practices Badge
-  partner: null
-  partner_match: register
-  type: register
-  channel: standard-directory
-  relationship: standard-participant
-  direction: partner-built
-  evidence: https://www.bestpractices.dev/en/projects/8404
-  category: OpenSSF Best Practices badge (open-source project security conformance)
-  contract_reference:
-    register: OpenSSF Best Practices badge projects (bestpractices.dev/en/projects.json, paged)
-    standard: OpenSSF Best Practices Badge criteria (formerly CII Best Practices; bestpractices.dev)
-    spec_file: null
-    role: badge-holder
-    registered_name: OpenTelemetry Collector
-    matched_by: github-org
-    matched_on: open-telemetry
-    certified_products:
-    - product: open-source project
-      product_type: open-source project
-      standard: OpenSSF Best Practices Badge criteria (formerly CII Best Practices; bestpractices.dev)
-      lapsed: false
-      partner_tier: passing
-      projects:
-      - name: OpenTelemetry .NET
-        id: 10017
-        url: https://www.bestpractices.dev/en/projects/10017
-        badge_level: passing
-      - name: OpenTelemetry .NET Automatic Instrumentation
-        id: 10371
-        url: https://www.bestpractices.dev/en/projects/10371
-        badge_level: passing
-      - name: OpenTelemetry .NET Contrib
-        id: 10370
-        url: https://www.bestpractices.dev/en/projects/10370
-        badge_level: passing
-      - name: OpenTelemetry Collector
-        id: 8404
-        url: https://www.bestpractices.dev/en/projects/8404
-        badge_level: passing
-      - name: OpenTelemetry Demo
-        id: 9247
-        url: https://www.bestpractices.dev/en/projects/9247
-        badge_level: passing
-      - name: OpenTelemetry Go
-        id: 9996
-        url: https://www.bestpractices.dev/en/projects/9996
-        badge_level: passing
-      - name: opentelemetry-android
-        id: 10007
-        url: https://www.bestpractices.dev/en/projects/10007
-        badge_level: passing
-      - name: opentelemetry-java
-        id: 9991
-        url: https://www.bestpractices.dev/en/projects/9991
-        badge_level: passing
-      - name: opentelemetry-java-contrib
-        id: 9992
-        url: https://www.bestpractices.dev/en/projects/9992
-        badge_level: passing
-      - name: opentelemetry-java-instrumentation
-        id: 9977
-        url: https://www.bestpractices.dev/en/projects/9977
-        badge_level: passing
-      - name: opentelemetry-proto
-        id: 10398
-        url: https://www.bestpractices.dev/en/projects/10398
-        badge_level: passing
-      - name: opentelemetry-proto-java
-        id: 10008
-        url: https://www.bestpractices.dev/en/projects/10008
-        badge_level: passing
-    signal_note: 'certified_products = ONE entry (product type: open-source project) with the highest CURRENT badge
-      level in partner_tier; a provider whose projects only lost the badge is lapsed: true; project names are context,
-      never counted; in_progress entries are not conformance'
-    detected_by: sweep-openssf-best-practices-badges.py
-    detected: '2026-10-22'
-    identity_source: apis.yml GitHubOrganization pointer (provider's own declaration)
-  detected_by: sweep-openssf-best-practices-badges.py
-  first_seen: '2026-10-22'
 - partner_name: Artifact Hub (artifact-hub)
   partner: artifact-hub
   partner_match: mirror
