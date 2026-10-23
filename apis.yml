@@ -195,6 +195,8 @@ apis:
   - type: Client Libraries
     url: https://opentelemetry.io/docs/languages/
 common:
+  - type: PostmanWorkspace
+    url: https://www.postman.com/kinlaneapi/opentelemetry/overview
   - type: Plans
     url: plans/opentelemetry-plans-pricing.yml
   - type: RateLimits
