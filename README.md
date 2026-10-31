@@ -1,4 +1,4 @@
-# OpenTelemetry (opentelemetry)
+# OpenTelemetry
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -66,108 +66,138 @@
 
 Vendor-neutral open-source observability framework for cloud-native software, providing a collection of tools, APIs, and SDKs for instrumenting, generating, collecting, and exporting telemetry data including metrics, logs, and traces.
 
-**URL:** [Visit APIs.json URL](https://raw.githubusercontent.com/api-evangelist/opentelemetry/refs/heads/main/apis.yml)
+**Areas:** Cloud-Native · Logging · Metrics · Monitoring · Observability · Open Source · Tracing
 
-## Scope
+## OpenTelemetry on APIs.io
 
-- **Type:** Index
-- **Position:** Consumer
-- **Access:** 3rd-Party
+Everything profiled for OpenTelemetry is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/opentelemetry/](https://apis.io/providers/opentelemetry/)** — or go straight to one of the APIs or properties below.
 
-## Tags:
+### APIs (6)
 
- - Cloud Native, Logging, Metrics, Monitoring, Observability, Open Source, Tracing
+- [OpenTelemetry Protocol (OTLP) gRPC API](https://apis.io/apis/opentelemetry/opentelemetry-protocol-otlp-grpc-api/) — The OTLP gRPC API defines Protocol Buffers service definitions for exporting traces, metrics, and logs over gRPC. It is the primary transport for…
+- [OpenTelemetry Collector API](https://apis.io/apis/opentelemetry/opentelemetry-collector-api/) — The OpenTelemetry Collector is a vendor-agnostic proxy for receiving, processing, and exporting telemetry data. It exposes HTTP and gRPC endpoints for…
+- [OpenTelemetry SDK API](https://apis.io/apis/opentelemetry/opentelemetry-sdk-api/) — The OpenTelemetry SDK API specifies language-level interfaces for instrumentation, including the Tracer, Meter, and Logger APIs used by application code to…
+- [OpenTelemetry Logs API](https://apis.io/apis/opentelemetry/opentelemetry-logs-api/) — The Logs API from OpenTelemetry — 1 operation(s) for logs.
+- [OpenTelemetry Metrics API](https://apis.io/apis/opentelemetry/opentelemetry-metrics-api/) — The Metrics API from OpenTelemetry — 1 operation(s) for metrics.
+- [OpenTelemetry Traces API](https://apis.io/apis/opentelemetry/opentelemetry-traces-api/) — The Traces API from OpenTelemetry — 1 operation(s) for traces.
 
-## Timestamps
+### Published properties
 
-- **Created:** 2025-01-01
-- **Modified:** 2026-04-28
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-## APIs
+#### AsyncAPI (1)
 
-### OpenTelemetry Protocol (OTLP) HTTP API
-The OTLP HTTP API provides endpoints for exporting traces, metrics, and logs using the OpenTelemetry Protocol, the native wire format for transmitting telemetry data between instrumented applications, collectors, and observability backends.
+Event-driven and webhook contracts.
 
-**Human URL:** [https://opentelemetry.io/docs/specs/otlp/](https://opentelemetry.io/docs/specs/otlp/)
+- [OpenTelemetry Protocol (OTLP) Telemetry Events](https://apis.io/asyncapis/opentelemetry/opentelemetry-otlp-asyncapi/)
 
-#### Tags:
+#### Event channels (3)
 
- - Logging, Metrics, Observability, Tracing
+Individual events and webhooks the provider emits.
 
-#### Properties
+- [/v1/logs](https://apis.io/channels/opentelemetry/v1-logs/)
+- [/v1/metrics](https://apis.io/channels/opentelemetry/v1-metrics/)
+- [/v1/traces](https://apis.io/channels/opentelemetry/v1-traces/)
 
-- [Documentation](https://opentelemetry.io/docs/specs/otlp/)
-- [OpenAPI](openapi.yml)
-- [AsyncAPI](asyncapi/opentelemetry-otlp-asyncapi.yml)
-- [JSONSchema](json-schema.json)
-- [JSON-LD](context.jsonld)
-- [Reference](https://opentelemetry.io/docs/specs/otlp/#otlphttp)
-- [Getting Started](https://opentelemetry.io/docs/collector/)
-- [Client Libraries](https://opentelemetry.io/docs/languages/)
+#### Collections (3)
 
-### OpenTelemetry Protocol (OTLP) gRPC API
-The OTLP gRPC API defines Protocol Buffers service definitions for exporting traces, metrics, and logs over gRPC. It is the primary transport for OpenTelemetry data between SDK instrumentation, the OpenTelemetry Collector, and observability backends, offering bidirectional streaming and efficient binary encoding.
+Postman and Open Collection request collections.
 
-**Human URL:** [https://opentelemetry.io/docs/specs/otlp/#otlpgrpc](https://opentelemetry.io/docs/specs/otlp/#otlpgrpc)
+- [OpenTelemetry Protocol (OTLP) HTTP Logs API](https://apis.io/collections/opentelemetry/open-opentelemetry-logs-api/)
+- [OpenTelemetry Protocol (OTLP) HTTP Metrics API](https://apis.io/collections/opentelemetry/open-opentelemetry-metrics-api/)
+- [OpenTelemetry Protocol (OTLP) HTTP Traces API](https://apis.io/collections/opentelemetry/open-opentelemetry-traces-api/)
 
-#### Tags:
+#### Governance rules (1)
 
- - gRPC, Logging, Metrics, Observability, Tracing
+Spectral rulesets for the provider's contracts.
 
-#### Properties
+- [OpenTelemetry — asyncapi rules](https://apis.io/rules/opentelemetry/opentelemetry-asyncapi-spectral-rules/)
 
-- [Documentation](https://opentelemetry.io/docs/specs/otlp/#otlpgrpc)
-- [Reference](https://opentelemetry.io/docs/specs/otlp/#otlpgrpc-response)
-- [GitHubRepository](https://github.com/open-telemetry/opentelemetry-proto)
+#### Security (1)
 
-### OpenTelemetry Collector API
-The OpenTelemetry Collector is a vendor-agnostic proxy for receiving, processing, and exporting telemetry data. It exposes HTTP and gRPC endpoints for receiving OTLP data and provides a configuration API for managing pipelines, receivers, processors, and exporters at runtime via the zPages diagnostic extension and config file hot-reloading.
+Authentication, trust centre, and vulnerability disclosure.
 
-**Human URL:** [https://opentelemetry.io/docs/collector/](https://opentelemetry.io/docs/collector/)
+- [Opentelemetry Domain Security](https://apis.io/security/opentelemetry/opentelemetry-domain-security/)
 
-#### Tags:
+#### Plans and pricing (1)
 
- - Collector, Configuration, Observability, Pipeline
+Published plans, tiers and prices.
 
-#### Properties
+- [Opentelemetry Plans Pricing](https://apis.io/plans/opentelemetry/opentelemetry-plans-pricing/)
 
-- [Documentation](https://opentelemetry.io/docs/collector/)
-- [Reference](https://opentelemetry.io/docs/collector/configuration/)
-- [GitHubRepository](https://github.com/open-telemetry/opentelemetry-collector)
+#### Rate limits (1)
 
-### OpenTelemetry SDK API
-The OpenTelemetry SDK API specifies language-level interfaces for instrumentation, including the Tracer, Meter, and Logger APIs used by application code to create spans, record metrics, and emit log records. Implementations are available for all major programming languages including Java, Python, Go, JavaScript, .NET, Ruby, and others.
+Published request limits.
 
-**Human URL:** [https://opentelemetry.io/docs/specs/otel/](https://opentelemetry.io/docs/specs/otel/)
+- [Opentelemetry Rate Limits](https://apis.io/rate-limits/opentelemetry/opentelemetry-rate-limits/)
 
-#### Tags:
+#### FinOps (1)
 
- - Instrumentation, Logging, Metrics, SDK, Tracing
+What the API costs to run, by operation.
 
-#### Properties
+- [Opentelemetry Finops](https://apis.io/finops/opentelemetry/opentelemetry-finops/)
 
-- [Documentation](https://opentelemetry.io/docs/specs/otel/)
-- [Reference](https://opentelemetry.io/docs/specs/otel/trace/api/)
-- [Client Libraries](https://opentelemetry.io/docs/languages/)
-- [GitHubRepository](https://github.com/open-telemetry/opentelemetry-specification)
+## Where to find this API
 
-## Common Properties
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
 
 - [Website](https://opentelemetry.io/)
 - [Documentation](https://opentelemetry.io/docs/)
-- [Getting Started](https://opentelemetry.io/docs/getting-started/)
-- [GitHub Organization](https://github.com/open-telemetry)
-- [GitHubRepository](https://github.com/open-telemetry/opentelemetry-specification)
-- [SDKs](https://opentelemetry.io/docs/languages/)
+- [Getting started](https://opentelemetry.io/docs/getting-started/)
+- [Changelog](https://github.com/open-telemetry/opentelemetry-specification/blob/main/CHANGELOG.md)
 - [Blog](https://opentelemetry.io/blog/)
-- [Community](https://opentelemetry.io/community/)
-- [Slack](https://cloud-native.slack.com/archives/CJFCJHG4Q)
-- [Stack Overflow](https://stackoverflow.com/questions/tagged/open-telemetry)
-- [Change Log](https://github.com/open-telemetry/opentelemetry-specification/blob/main/CHANGELOG.md)
 - [Security](https://github.com/open-telemetry/opentelemetry-collector/security/policy)
+- [GitHub](https://github.com/open-telemetry)
 
-## Maintainers
+## API Evangelist rating
 
-**FN:** Kin Lane
+**Kin Score 38.4** — thin · rubric 0.24.0 · scored 2026-10-17
 
-**Email:** kin@apievangelist.com
+| Facet | Score |
+|---|---|
+| Discoverability | 64.3 |
+| Contract quality | 57.6 |
+| Contract governance | 13.6 |
+| Operational transparency | 39.5 |
+| Developer ergonomics | 42.9 |
+| Access clarity | 7.9 |
+
+**Agent readiness 27.3** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | verified |
+| OpenAPI Examples | — |
+| Rate Limit Signal | verified |
+| Event Surface Described | derived (partial credit) |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+
+**Regulatory alignment 5.9** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/opentelemetry/](https://apis.io/providers/opentelemetry/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for OpenTelemetry: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/opentelemetry/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
